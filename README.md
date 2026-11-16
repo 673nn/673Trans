@@ -69,6 +69,8 @@ Công tắc nguồn cho từng dịch vụ: tắt thì chỉ dịch khi bạn m�
 - 7 nút bật/tắt được: Dịch, Dịch và thay thế (dán bản dịch đè lên đoạn đang chọn), Dịch và sao chép, Đọc to, Tra từ điển, Gõ từ, Sao chép.
 - Kéo thả đổi thứ tự nút; ngang/dọc; chỉ icon, chỉ chữ hoặc cả hai; độ lệch; **bộ lọc ứng dụng** (danh sách chặn hoặc danh sách cho phép, chọn từ các app đang mở); có ô **Xem trước** ngay trong cài đặt.
 
+- **Dịch khi di chuột**: giữ Ctrl (hoặc Alt/Shift, tự chọn) và rê chuột lên một dòng/đoạn ở bất kỳ app nào, bản dịch phủ đè ngay tại chỗ hoặc hiện song ngữ bên dưới. Chạy với trình duyệt, app Electron, Office và đa số app Windows.
+
 <br clear="right"/>
 
 **Dịch và thay thế**: bôi đen một câu, bấm nút thay thế, bản dịch được dán đè đúng chỗ đang chọn, không cần copy-paste.
