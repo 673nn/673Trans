@@ -108,3 +108,93 @@ pub fn list_windows() -> Vec<WinRect> {
 pub fn list_windows() -> Vec<WinRect> {
     Vec::new()
 }
+
+/// Apps that have a visible window right now (one entry per exe), for the app filter of the
+/// selection toolbar (Config > Selection toolbar). Other systems return an empty list.
+#[derive(serde::Serialize)]
+pub struct RunningApp {
+    pub exe: String,
+    pub title: String,
+    pub path: String,
+}
+
+#[cfg(windows)]
+#[tauri::command]
+pub fn list_running_apps() -> Vec<RunningApp> {
+    use windows::core::PWSTR;
+    use windows::Win32::Foundation::{CloseHandle, BOOL, HWND, LPARAM};
+    use windows::Win32::Graphics::Dwm::{DwmGetWindowAttribute, DWMWA_CLOAKED};
+    use windows::Win32::System::Threading::{
+        GetCurrentProcessId, OpenProcess, QueryFullProcessImageNameW, PROCESS_NAME_WIN32,
+        PROCESS_QUERY_LIMITED_INFORMATION,
+    };
+    use windows::Win32::UI::WindowsAndMessaging::{
+        EnumWindows, GetWindow, GetWindowLongPtrW, GetWindowTextW, GetWindowThreadProcessId, IsWindowVisible,
+        GWL_EXSTYLE, GW_OWNER, WS_EX_TOOLWINDOW,
+    };
+
+    unsafe extern "system" fn each(hwnd: HWND, lparam: LPARAM) -> BOOL {
+        let list = &mut *(lparam.0 as *mut Vec<RunningApp>);
+        if !IsWindowVisible(hwnd).as_bool() {
+            return BOOL(1);
+        }
+        // real app windows: not owned, not tool windows
+        if GetWindow(hwnd, GW_OWNER).map(|o| !o.0.is_null()).unwrap_or(false) {
+            return BOOL(1);
+        }
+        if GetWindowLongPtrW(hwnd, GWL_EXSTYLE) as u32 & WS_EX_TOOLWINDOW.0 != 0 {
+            return BOOL(1);
+        }
+        let mut cloaked = 0u32;
+        let _ = DwmGetWindowAttribute(
+            hwnd,
+            DWMWA_CLOAKED,
+            &mut cloaked as *mut _ as *mut _,
+            std::mem::size_of::<u32>() as u32,
+        );
+        if cloaked != 0 {
+            return BOOL(1);
+        }
+        let mut buf = [0u16; 256];
+        let n = GetWindowTextW(hwnd, &mut buf) as usize;
+        let title = String::from_utf16_lossy(&buf[..n]);
+        if title.trim().is_empty() {
+            return BOOL(1);
+        }
+        let mut pid = 0u32;
+        GetWindowThreadProcessId(hwnd, Some(&mut pid));
+        if pid == 0 || pid == GetCurrentProcessId() {
+            return BOOL(1);
+        }
+        let Ok(handle) = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, pid) else {
+            return BOOL(1);
+        };
+        let mut pbuf = [0u16; 1024];
+        let mut len = pbuf.len() as u32;
+        let ok = QueryFullProcessImageNameW(handle, PROCESS_NAME_WIN32, PWSTR(pbuf.as_mut_ptr()), &mut len).is_ok();
+        let _ = CloseHandle(handle);
+        if !ok {
+            return BOOL(1);
+        }
+        let path = String::from_utf16_lossy(&pbuf[..len as usize]);
+        let exe = path.rsplit(['\\', '/']).next().unwrap_or("").to_string();
+        if exe.is_empty() || list.iter().any(|a| a.exe.eq_ignore_ascii_case(&exe)) {
+            return BOOL(1);
+        }
+        list.push(RunningApp { exe, title, path });
+        BOOL(1)
+    }
+
+    let mut list: Vec<RunningApp> = Vec::new();
+    unsafe {
+        let _ = EnumWindows(Some(each), LPARAM(&mut list as *mut _ as isize));
+    }
+    list.sort_by(|a, b| a.exe.to_lowercase().cmp(&b.exe.to_lowercase()));
+    list
+}
+
+#[cfg(not(windows))]
+#[tauri::command]
+pub fn list_running_apps() -> Vec<RunningApp> {
+    Vec::new()
+}

@@ -203,7 +203,25 @@
                 "offset_y": "Độ lệch dọc",
                 "offset_y_desc": "Dời thanh lên hoặc xuống so với con trỏ chuột; giá trị dương dời xuống.",
                 "position": "Bố trí và vị trí",
-                "drag": "Kéo để đổi thứ tự nút"
+                "drag": "Kéo để đổi thứ tự nút",
+                "filter": {
+                    "title": "Bộ lọc ứng dụng",
+                    "mode": "Chế độ lọc",
+                    "block": "Danh sách chặn",
+                    "allow": "Danh sách cho phép",
+                    "mode_block_desc": "Trợ lý chọn văn bản không hoạt động trong các ứng dụng có trong danh sách.",
+                    "mode_allow_desc": "Trợ lý chọn văn bản chỉ hoạt động trong các ứng dụng có trong danh sách.",
+                    "list": "Danh sách ứng dụng",
+                    "add": "Thêm ứng dụng",
+                    "remove": "Bỏ khỏi danh sách",
+                    "empty": "Chưa thêm ứng dụng nào.",
+                    "empty_block": "Trợ lý đang hoạt động ở mọi ứng dụng. Thêm ứng dụng để chặn trợ lý ở đó.",
+                    "empty_allow": "Danh sách cho phép đang trống nên trợ lý sẽ không hiện ở đâu cả. Thêm ứng dụng để bật trợ lý ở đó.",
+                    "picker_desc": "Các ứng dụng đang mở. Bấm để thêm, hoặc chọn file .exe.",
+                    "search": "Tìm ứng dụng",
+                    "browse": "Chọn file .exe",
+                    "none_running": "Không tìm thấy ứng dụng nào đang mở."
+                }
             },
             "recognize": {
                 "label": "Cài đặt OCR",

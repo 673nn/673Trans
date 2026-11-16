@@ -350,8 +350,29 @@ pub fn recognize_window() {
     window.emit("new_image", "").unwrap();
 }
 
+// The screen is captured here, before the screenshot window exists: creating / focusing a
+// window closes open menus and dropdowns, so they would be missing from the capture.
+static PRECAPTURED: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+
+/// true once: the screenshot window then skips its own capture.
+#[tauri::command]
+pub fn take_precapture() -> bool {
+    PRECAPTURED.swap(false, std::sync::atomic::Ordering::SeqCst)
+}
+
 #[cfg(not(target_os = "macos"))]
 fn screenshot_window() -> Window {
+    {
+        use mouse_position::mouse_position::{Mouse, Position};
+        let pos = match Mouse::get_mouse_position() {
+            Mouse::Position { x, y } => Position { x, y },
+            Mouse::Error => Position { x: 0, y: 0 },
+        };
+        let monitor = get_current_monitor(pos.x, pos.y);
+        let p = monitor.position();
+        crate::screenshot::screenshot(p.x, p.y);
+        PRECAPTURED.store(true, std::sync::atomic::Ordering::SeqCst);
+    }
     let (window, _exists) = build_window("screenshot", "Screenshot");
 
     window.set_skip_taskbar(true).unwrap();
