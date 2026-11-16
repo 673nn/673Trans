@@ -67,6 +67,12 @@
     color: hsl(var(--nextui-foreground));
 }
 
+/* Services is the most important page: always on a light grey background */
+.config-nav-item.is-key:not(.is-active):not(:hover) {
+    background: hsl(var(--nextui-default-100) / 0.55);
+    color: hsl(var(--nextui-foreground));
+}
+
 .config-nav-item.is-active {
     background: hsl(var(--nextui-default-100));
     color: hsl(var(--nextui-foreground));

@@ -197,7 +197,8 @@
                 "change": "Change",
                 "cancel": "Cancel",
                 "clear_short": "Clear",
-                "not_set": "Not set"
+                "not_set": "Not set",
+                "screen_capture": "Screenshot (with drawing tools)"
             },
             "service": {
                 "label": "Service",
@@ -365,7 +366,24 @@
                 "handles": "Show resize handles on the selection",
                 "handles_desc": "After dragging, resize with the 8 handles or move the box; press Enter or double-click to confirm.",
                 "detect": "Window detection",
-                "detect_desc": "Hover to highlight a window and click to capture it whole (Windows only)."
+                "detect_desc": "Hover to highlight a window and click to capture it whole (Windows only).",
+                "editor": "Show the editor for OCR / translate captures",
+                "editor_desc": "The Screenshot hotkey always has the toolbar; turn this on to get it for the OCR and image translate hotkeys too.",
+                "section_annotation": "Default annotation style",
+                "color": "Annotation color",
+                "color_desc": "Default color for pen, arrows, shapes and text.",
+                "color_pick": "Pick another color",
+                "stroke": "Stroke width",
+                "font": "Font size",
+                "section_output": "Image output",
+                "save_dir": "Save location",
+                "save_dir_desc": "Leave empty to choose a place every time.",
+                "save_dir_ask": "Ask every time",
+                "browse": "Browse",
+                "format": "Image format",
+                "copy_file": "Copy image as a file",
+                "copy_file_desc": "Paste it into folders or chat apps as an attachment.",
+                "close_after": "Close after copying or saving"
             }
         },
         "updater": {
@@ -739,7 +757,31 @@
             "save_no_service": "No vocabulary service is enabled (Services → Vocabulary)."
         },
         "screenshot": {
-            "adjust_hint": "Drag to adjust • Enter or double-click to confirm • Esc to cancel"
+            "adjust_hint": "Drag to adjust • Enter or double-click to confirm • Esc to cancel",
+            "tool_move": "Select / move area",
+            "tool_pen": "Pen",
+            "tool_marker": "Highlighter",
+            "tool_arrow": "Arrow",
+            "tool_rect": "Rectangle (Shift: square)",
+            "tool_ellipse": "Ellipse (Shift: circle)",
+            "tool_text": "Text",
+            "tool_mosaic": "Blur (mosaic)",
+            "undo": "Undo (Ctrl+Z)",
+            "redo": "Redo (Ctrl+Y)",
+            "ocr": "Recognize text (OCR)",
+            "translate": "Translate image",
+            "save": "Save image (Ctrl+S)",
+            "copy": "Copy (Ctrl+C)",
+            "cancel": "Cancel (Esc)",
+            "done_copy": "Done: copy (Enter)",
+            "done_action": "Done (Enter)",
+            "custom_color": "Custom color",
+            "brush_size": "Brush size",
+            "font_size": "Font size",
+            "preview": "Preview",
+            "copied": "Copied",
+            "saved": "Image saved",
+            "text_placeholder": "Type text…"
         }
     }
 }

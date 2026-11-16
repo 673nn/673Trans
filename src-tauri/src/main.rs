@@ -38,6 +38,7 @@ use tauri_plugin_log::LogTarget;
 use tray::*;
 use window::config_window;
 use window::updater_window;
+use window::{get_screenshot_mode, screenshot_action};
 
 // Global AppHandle
 pub static APP: OnceCell<tauri::AppHandle> = OnceCell::new();
@@ -136,6 +137,11 @@ fn main() {
             copy_img,
             system_ocr,
             apply_network,
+            save_capture,
+            copy_capture,
+            write_capture_cut,
+            get_screenshot_mode,
+            screenshot_action,
             test_network,
             list_windows,
             run_binary,

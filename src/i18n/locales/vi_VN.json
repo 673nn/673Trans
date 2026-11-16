@@ -252,7 +252,8 @@
                 "change": "Đổi phím",
                 "cancel": "Huỷ",
                 "clear_short": "Xoá",
-                "not_set": "Chưa gán"
+                "not_set": "Chưa gán",
+                "screen_capture": "Chụp màn hình (có công cụ vẽ)"
             },
             "service": {
                 "label": "Dịch vụ",
@@ -365,7 +366,24 @@
                 "handles": "Hiển thị các nút điều chỉnh kích thước vùng chọn",
                 "handles_desc": "Sau khi kéo, có thể kéo 8 nút hoặc di chuyển vùng; nhấn Enter hoặc nhấp đúp để xác nhận.",
                 "detect": "Phát hiện cửa sổ",
-                "detect_desc": "Rê chuột để tô sáng cửa sổ, nhấp để chọn cả cửa sổ (chỉ Windows)."
+                "detect_desc": "Rê chuột để tô sáng cửa sổ, nhấp để chọn cả cửa sổ (chỉ Windows).",
+                "editor": "Hiện trình chỉnh sửa khi chụp để OCR / dịch",
+                "editor_desc": "Phím tắt Chụp màn hình luôn có thanh công cụ; bật mục này để phím OCR và dịch ảnh cũng có.",
+                "section_annotation": "Kiểu chú thích mặc định",
+                "color": "Màu chú thích",
+                "color_desc": "Màu mặc định của bút, mũi tên, khung và chữ.",
+                "color_pick": "Chọn màu khác",
+                "stroke": "Độ dày nét",
+                "font": "Cỡ chữ",
+                "section_output": "Đầu ra ảnh",
+                "save_dir": "Vị trí lưu",
+                "save_dir_desc": "Để trống thì mỗi lần lưu sẽ hỏi chỗ lưu.",
+                "save_dir_ask": "Hỏi mỗi lần lưu",
+                "browse": "Duyệt",
+                "format": "Định dạng ảnh",
+                "copy_file": "Sao chép ảnh dưới dạng file",
+                "copy_file_desc": "Dán được vào thư mục, Zalo, Slack… như một file đính kèm.",
+                "close_after": "Đóng sau khi sao chép hoặc lưu ảnh"
             }
         },
         "updater": {
@@ -524,7 +542,31 @@
             "save_no_service": "Chưa có dịch vụ sổ từ vựng nào đang bật (Dịch vụ → Sổ từ vựng)."
         },
         "screenshot": {
-            "adjust_hint": "Kéo để chỉnh • Enter hoặc nhấp đúp để xác nhận • Esc để hủy"
+            "adjust_hint": "Kéo để chỉnh • Enter hoặc nhấp đúp để xác nhận • Esc để hủy",
+            "tool_move": "Chọn / di chuyển vùng",
+            "tool_pen": "Bút vẽ",
+            "tool_marker": "Bút dạ quang",
+            "tool_arrow": "Mũi tên",
+            "tool_rect": "Hình chữ nhật (giữ Shift: vuông)",
+            "tool_ellipse": "Hình elip (giữ Shift: tròn)",
+            "tool_text": "Chữ",
+            "tool_mosaic": "Làm mờ (mosaic)",
+            "undo": "Hoàn tác (Ctrl+Z)",
+            "redo": "Làm lại (Ctrl+Y)",
+            "ocr": "Nhận dạng chữ (OCR)",
+            "translate": "Dịch ảnh",
+            "save": "Lưu ảnh (Ctrl+S)",
+            "copy": "Sao chép (Ctrl+C)",
+            "cancel": "Hủy (Esc)",
+            "done_copy": "Xong: sao chép (Enter)",
+            "done_action": "Xong (Enter)",
+            "custom_color": "Màu khác",
+            "brush_size": "Cỡ nét",
+            "font_size": "Cỡ chữ",
+            "preview": "Xem trước",
+            "copied": "Đã sao chép",
+            "saved": "Đã lưu ảnh",
+            "text_placeholder": "Nhập chữ…"
         }
     }
 }

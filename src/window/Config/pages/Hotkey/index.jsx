@@ -396,6 +396,10 @@ export default function Hotkey() {
             </Section>
             <Section title={h('group_screenshot')}>
                 <HotkeyRow
+                    name='hotkey_screen_capture'
+                    label={h('screen_capture')}
+                />
+                <HotkeyRow
                     name='hotkey_ocr_recognize'
                     label={h('ocr_recognize')}
                 />

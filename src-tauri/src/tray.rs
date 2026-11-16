@@ -4,6 +4,7 @@ use crate::window::config_window;
 use crate::window::input_translate;
 use crate::window::ocr_recognize;
 use crate::window::ocr_translate;
+use crate::window::screen_capture;
 use crate::window::updater_window;
 use log::info;
 use tauri::CustomMenuItem;
@@ -108,6 +109,7 @@ pub fn tray_event_handler<'a>(app: &'a AppHandle, event: SystemTrayEvent) {
             "copy_target" => on_auto_copy_click(app, "target"),
             "copy_source_target" => on_auto_copy_click(app, "source_target"),
             "copy_disable" => on_auto_copy_click(app, "disable"),
+            "screen_capture" => screen_capture(),
             "ocr_recognize" => on_ocr_recognize_click(),
             "ocr_translate" => on_ocr_translate_click(),
             "config" => on_config_click(),
@@ -211,6 +213,7 @@ fn tray_menu_en() -> tauri::SystemTrayMenu {
     let clipboard_monitor = CustomMenuItem::new("clipboard_monitor", "Clipboard Monitor");
     let copy_source_target = CustomMenuItem::new("copy_source_target", "Source+Target");
     let copy_disable = CustomMenuItem::new("copy_disable", "Disable");
+    let screen_capture = CustomMenuItem::new("screen_capture", "Screenshot");
     let ocr_recognize = CustomMenuItem::new("ocr_recognize", "OCR Recognize");
     let ocr_translate = CustomMenuItem::new("ocr_translate", "OCR Translate");
     let config = CustomMenuItem::new("config", "Config");
@@ -231,6 +234,7 @@ fn tray_menu_en() -> tauri::SystemTrayMenu {
                 .add_item(copy_disable),
         ))
         .add_native_item(SystemTrayMenuItem::Separator)
+        .add_item(screen_capture)
         .add_item(ocr_recognize)
         .add_item(ocr_translate)
         .add_native_item(SystemTrayMenuItem::Separator)
@@ -249,6 +253,7 @@ fn tray_menu_vi() -> tauri::SystemTrayMenu {
     let clipboard_monitor = CustomMenuItem::new("clipboard_monitor", "Theo dõi clipboard");
     let copy_source_target = CustomMenuItem::new("copy_source_target", "Gốc + bản dịch");
     let copy_disable = CustomMenuItem::new("copy_disable", "Tắt");
+    let screen_capture = CustomMenuItem::new("screen_capture", "Chụp màn hình");
     let ocr_recognize = CustomMenuItem::new("ocr_recognize", "Nhận dạng chữ (OCR)");
     let ocr_translate = CustomMenuItem::new("ocr_translate", "Dịch ảnh chụp màn hình");
     let config = CustomMenuItem::new("config", "Cài đặt");
@@ -269,6 +274,7 @@ fn tray_menu_vi() -> tauri::SystemTrayMenu {
                 .add_item(copy_disable),
         ))
         .add_native_item(SystemTrayMenuItem::Separator)
+        .add_item(screen_capture)
         .add_item(ocr_recognize)
         .add_item(ocr_translate)
         .add_native_item(SystemTrayMenuItem::Separator)

@@ -460,3 +460,127 @@ pub fn dict_import(src: String) -> Result<String, String> {
     }
     Ok(target.to_string_lossy().to_string())
 }
+
+// ---------------------------------------------------------------------------
+// Screenshot editor output (src/window/Screenshot). The webview sends the finished
+// image as base64; the file locations are decided here, never by the page.
+// ---------------------------------------------------------------------------
+fn decode_capture(data: &str) -> Result<Vec<u8>, String> {
+    use base64::Engine;
+    let raw = data.split_once(',').map(|(_, b)| b).unwrap_or(data);
+    base64::engine::general_purpose::STANDARD
+        .decode(raw)
+        .map_err(|e| e.to_string())
+}
+
+fn capture_cache_dir(app_handle: &tauri::AppHandle) -> std::path::PathBuf {
+    let mut dir = dirs::cache_dir().expect("Get Cache Dir Failed");
+    dir.push(&app_handle.config().tauri.bundle.identifier);
+    dir
+}
+
+/// Only letters, digits, '-', '_' and '.', so the name can't leave the folder.
+fn clean_name(name: &str) -> String {
+    let n: String = name
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric() || *c == '-' || *c == '_' || *c == '.')
+        .collect();
+    let n = n.trim_start_matches('.').to_string();
+    if n.is_empty() {
+        "673Trans.png".into()
+    } else {
+        n
+    }
+}
+
+fn save_dir() -> Option<std::path::PathBuf> {
+    let dir = crate::config::get("screenshot_save_dir")
+        .and_then(|v| v.as_str().map(|s| s.trim().to_string()))
+        .unwrap_or_default();
+    if dir.is_empty() {
+        return None;
+    }
+    let p = std::path::PathBuf::from(dir);
+    if !p.exists() {
+        let _ = std::fs::create_dir_all(&p);
+    }
+    p.is_dir().then_some(p)
+}
+
+/// Save to the folder from Config > Screenshot, or ask with a Save dialog when none is set.
+/// Returns the saved path, or "" when the dialog was cancelled.
+#[tauri::command(async)]
+pub fn save_capture(data: String, name: String) -> Result<String, String> {
+    let bytes = decode_capture(&data)?;
+    let name = clean_name(&name);
+    let path = match save_dir() {
+        Some(mut dir) => {
+            dir.push(&name);
+            dir
+        }
+        None => {
+            let ext = name.rsplit('.').next().unwrap_or("png").to_string();
+            match tauri::api::dialog::blocking::FileDialogBuilder::new()
+                .set_file_name(&name)
+                .add_filter(ext.to_uppercase(), &[ext.as_str()])
+                .save_file()
+            {
+                Some(p) => p,
+                None => return Ok(String::new()),
+            }
+        }
+    };
+    std::fs::write(&path, bytes).map_err(|e| e.to_string())?;
+    Ok(path.to_string_lossy().to_string())
+}
+
+/// Copy the image, or (as_file) a file of it so it can be pasted into Explorer / chat apps.
+#[tauri::command(async)]
+pub fn copy_capture(
+    app_handle: tauri::AppHandle,
+    data: String,
+    name: String,
+    as_file: bool,
+) -> Result<(), String> {
+    let bytes = decode_capture(&data)?;
+    if as_file {
+        let mut path = match save_dir() {
+            Some(d) => d,
+            None => {
+                let mut d = capture_cache_dir(&app_handle);
+                d.push("captures");
+                let _ = std::fs::create_dir_all(&d);
+                d
+            }
+        };
+        path.push(clean_name(&name));
+        std::fs::write(&path, &bytes).map_err(|e| e.to_string())?;
+        #[cfg(target_os = "windows")]
+        {
+            let p = path.to_string_lossy().to_string();
+            let _clip = clipboard_win::Clipboard::new_attempts(10).map_err(|e| e.to_string())?;
+            return clipboard_win::raw::set_file_list(&[p]).map_err(|e| e.to_string());
+        }
+    }
+    let img = image::load_from_memory(&bytes).map_err(|e| e.to_string())?.to_rgba8();
+    let (w, h) = img.dimensions();
+    arboard::Clipboard::new()
+        .and_then(|mut c| {
+            c.set_image(arboard::ImageData {
+                width: w as usize,
+                height: h as usize,
+                bytes: std::borrow::Cow::from(img.into_raw()),
+            })
+        })
+        .map_err(|e| e.to_string())
+}
+
+/// Write the edited image where OCR / image translate read it (pot_screenshot_cut.png).
+#[tauri::command(async)]
+pub fn write_capture_cut(app_handle: tauri::AppHandle, data: String) -> Result<(), String> {
+    let bytes = decode_capture(&data)?;
+    let mut path = capture_cache_dir(&app_handle);
+    let _ = std::fs::create_dir_all(&path);
+    path.push("pot_screenshot_cut.png");
+    std::fs::write(path, bytes).map_err(|e| e.to_string())
+}
