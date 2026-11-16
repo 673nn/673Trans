@@ -107,8 +107,21 @@ function HotkeyControl({ value, onSet }) {
             setRecording(false);
             onSet(combo, value);
         };
+        // Windows only sends keyup (no keydown) for the Print Screen key
+        const onKeyUp = (e) => {
+            if (e.code !== 'PrintScreen') return;
+            e.preventDefault();
+            const combo = comboFromEvent(e);
+            if (!combo) return;
+            setRecording(false);
+            onSet(combo, value);
+        };
         window.addEventListener('keydown', onKey, true);
-        return () => window.removeEventListener('keydown', onKey, true);
+        window.addEventListener('keyup', onKeyUp, true);
+        return () => {
+            window.removeEventListener('keydown', onKey, true);
+            window.removeEventListener('keyup', onKeyUp, true);
+        };
     }, [recording, value, onSet]);
 
     const statusChip = {
