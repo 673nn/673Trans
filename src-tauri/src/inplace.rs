@@ -313,7 +313,7 @@ mod imp {
             std::thread::sleep(std::time::Duration::from_millis(800));
         }
         let raw = HWND_RAW.load(SeqCst);
-        let _ = window.emit("inplace_show", serde_json::json!({ "probe": probe, "result": result }));
+        // place and mark visible first: the page answers the event with inplace_resize
         *SHOWN.lock().unwrap() = bbox;
         unsafe {
             let _ = SetWindowPos(
@@ -327,6 +327,7 @@ mod imp {
             );
         }
         VISIBLE.store(true, SeqCst);
+        let _ = window.emit("inplace_show", serde_json::json!({ "probe": probe, "result": result }));
         SUSPENDED.store(false, SeqCst);
         let (src, src_rect) = *PENDING.lock().unwrap();
         SRC.store(src, SeqCst);

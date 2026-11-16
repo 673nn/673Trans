@@ -46,13 +46,34 @@ export default function Inplace() {
         };
     }, []);
 
-    // the translation can be longer than the original: grow the window to fit
+    const [fontPx, setFontPx] = useState(null);
+
+    // Fit the translation in the original lines: shrink the font a little if that is enough,
+    // otherwise keep the size and grow the window downwards. Measured once the font is loaded.
     useLayoutEffect(() => {
         if (!data || !textRef.current) return;
+        let alive = true;
         const p = data.probe;
         const el = textRef.current;
-        const height = Math.max(p.height, el.offsetTop + el.scrollHeight + 2);
-        invoke('inplace_resize', { width: p.width, height }).catch(() => {});
+        const fit = () => {
+            if (!alive) return;
+            const room = p.height + 2;
+            let size = p.font_px;
+            el.style.fontSize = `${size}px`;
+            while (el.offsetTop + el.scrollHeight > room && size > p.font_px * 0.8) {
+                size -= 0.5;
+                el.style.fontSize = `${size}px`;
+            }
+            if (el.offsetTop + el.scrollHeight > room) size = p.font_px;
+            el.style.fontSize = `${size}px`;
+            setFontPx(size);
+            const height = Math.max(p.height, el.offsetTop + el.scrollHeight + 2);
+            invoke('inplace_resize', { width: p.width, height }).catch(() => {});
+        };
+        document.fonts.ready.then(fit);
+        return () => {
+            alive = false;
+        };
     }, [data]);
 
     if (!data) return null;
@@ -77,7 +98,7 @@ export default function Inplace() {
                         left: Math.max(0, l.x - 1),
                         top: Math.max(0, l.y - 1),
                         width: l.w + 2,
-                        height: l.h + 2,
+                        height: l.h + 3,
                         background: bg,
                     }}
                 />
@@ -91,7 +112,7 @@ export default function Inplace() {
                     width: p.width,
                     textIndent: first.x,
                     color: fg,
-                    font: `${p.font_weight >= 600 ? 700 : 400} ${p.font_px}px/${Math.max(lineH, p.font_px * 1.2)}px ${family}`,
+                    font: `${p.font_weight >= 600 ? 700 : 400} ${fontPx ?? p.font_px}px/${Math.max(lineH, p.font_px * 1.2)}px ${family}`,
                     whiteSpace: 'pre-wrap',
                     wordBreak: 'break-word',
                 }}
