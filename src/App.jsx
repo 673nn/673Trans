@@ -9,7 +9,7 @@ import { invoke } from '@tauri-apps/api/tauri';
 import Screenshot from './window/Screenshot';
 import SelToolbar from './window/SelToolbar';
 import Dict from './window/Dict';
-import HoverTranslate from './window/HoverTranslate';
+import Inplace from './window/Inplace';
 import Translate from './window/Translate';
 import Recognize from './window/Recognize';
 import Updater from './window/Updater';
@@ -29,7 +29,7 @@ const windowMap = {
     updater: <Updater />,
     seltoolbar: <SelToolbar />,
     dict: <Dict />,
-    hovertrans: <HoverTranslate />,
+    inplace: <Inplace />,
 };
 
 export default function App() {
