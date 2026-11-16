@@ -821,7 +821,8 @@
             "preview": "Preview",
             "copied": "Copied",
             "saved": "Image saved",
-            "text_placeholder": "Type text…"
+            "text_placeholder": "Type text…",
+            "style": "Color and size"
         }
     }
 }

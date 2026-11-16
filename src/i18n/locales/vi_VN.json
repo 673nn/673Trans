@@ -609,7 +609,8 @@
             "preview": "Xem trước",
             "copied": "Đã sao chép",
             "saved": "Đã lưu ảnh",
-            "text_placeholder": "Nhập chữ…"
+            "text_placeholder": "Nhập chữ…",
+            "style": "Màu và cỡ nét"
         }
     }
 }
