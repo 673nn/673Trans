@@ -72,7 +72,7 @@ export default function Translate() {
     // The last position is saved when either kind of window uses it
     const windowPosition = inputPosition === 'pre_state' || selectPosition === 'pre_state' ? 'pre_state' : null;
     const [rememberWindowSize] = useConfig('translate_remember_window_size', false);
-    const [translateServiceInstanceList, setTranslateServiceInstanceList] = useConfig('translate_service_list', ['google', 'bing']);
+    const [translateServiceInstanceList, setTranslateServiceInstanceList] = useConfig('translate_service_list', ['google']);
     const [recognizeServiceInstanceList] = useConfig('recognize_service_list', ['system', 'tesseract']);
     const [ttsServiceInstanceList] = useConfig('tts_service_list', ['local_tts']);
     const [collectionServiceInstanceList] = useConfig('collection_service_list', []);

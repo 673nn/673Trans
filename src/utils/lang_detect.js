@@ -325,8 +325,8 @@ export default async function detect(text) {
             return await niutrans_detect(text);
         case 'yandex':
             return await yandex_detect(text);
-        case 'bing':
-            return await bing_detect(text);
+        case 'bing': // Microsoft closed the free Edge endpoint
+            return await local_detect(text);
         default:
             return await local_detect(text);
     }

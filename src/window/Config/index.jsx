@@ -79,7 +79,14 @@ export default function Config() {
                     className='top-[5px] left-[225px] right-[110px] h-[40px] fixed'
                 />
                 <div className='config-header'>
-                    <h2 className='config-title'>{t(`config.${location.pathname.slice(1)}.title`)}</h2>
+                    <div className='flex items-center gap-[16px]'>
+                        <h2 className='config-title'>{t(`config.${location.pathname.slice(1)}.title`)}</h2>
+                        {/* pages can put small controls next to the title (see History) */}
+                        <div
+                            id='config-header-slot'
+                            className='relative z-10'
+                        />
+                    </div>
                     <div className='flex'>{osType !== 'Darwin' && <WindowControl />}</div>
                 </div>
                 <div className='config-page'>{page}</div>

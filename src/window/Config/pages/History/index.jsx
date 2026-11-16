@@ -5,6 +5,7 @@ import { Textarea, Button, ButtonGroup } from '@nextui-org/react';
 import { appConfigDir, join } from '@tauri-apps/api/path';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { Pagination } from '@nextui-org/react';
 import { useTranslation } from 'react-i18next';
@@ -33,16 +34,19 @@ export default function History() {
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
     const [items, setItems] = useState([]);
+    const [pageSize, setPageSize] = useConfig('history_page_size', 16);
+    const [headerSlot, setHeaderSlot] = useState(null);
     const toastStyle = useToastStyle();
     const { t } = useTranslation();
     useEffect(() => {
         init();
         loadPluginList();
+        setHeaderSlot(document.getElementById('config-header-slot'));
     }, []);
 
     useEffect(() => {
-        getData();
-    }, [total, page]);
+        if (pageSize !== null) getData();
+    }, [total, page, pageSize]);
 
     const init = async () => {
         const db = await Database.load('sqlite:history.db');
@@ -53,7 +57,8 @@ export default function History() {
     };
     const getData = async () => {
         const db = await Database.load('sqlite:history.db');
-        let result = await db.select('SELECT * FROM history ORDER BY id DESC LIMIT 20 OFFSET $1', [20 * (page - 1)]);
+        const size = pageSize ?? 16;
+        let result = await db.select('SELECT * FROM history ORDER BY id DESC LIMIT $1 OFFSET $2', [size, size * (page - 1)]);
         setItems(result);
     };
 
@@ -123,6 +128,32 @@ export default function History() {
         pluginList !== null && (
             <>
                 <Toaster />
+                {headerSlot &&
+                    pageSize !== null &&
+                    createPortal(
+                        <div className='flex items-center gap-[8px]'>
+                            <span className='text-[12.5px] text-default-500'>{t('config.history.rows_per_page')}</span>
+                            <ButtonGroup
+                                size='sm'
+                                variant='flat'
+                            >
+                                {[16, 32, 64].map((n) => (
+                                    <Button
+                                        key={n}
+                                        className='min-w-[40px] h-[26px]'
+                                        color={pageSize === n ? 'primary' : 'default'}
+                                        onPress={() => {
+                                            setPageSize(n);
+                                            setPage(1);
+                                        }}
+                                    >
+                                        {n}
+                                    </Button>
+                                ))}
+                            </ButtonGroup>
+                        </div>,
+                        headerSlot
+                    )}
                 <Table
                     fullWidth
                     hideHeader
@@ -215,7 +246,7 @@ export default function History() {
                     <Pagination
                         showControls
                         isCompact
-                        total={Math.ceil(total / 20)}
+                        total={Math.max(1, Math.ceil(total / (pageSize ?? 16)))}
                         page={page}
                         onChange={setPage}
                     />

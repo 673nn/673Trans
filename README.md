@@ -14,10 +14,10 @@
 <p align="center">
   <a href="https://github.com/nguyenguyen673/673Trans/releases/latest"><img src="https://img.shields.io/badge/%E2%AC%87%20T%E1%BA%A3i%20673Trans%20(.exe)-Releases-bff03a?style=for-the-badge&labelColor=0b2a12" alt="Tải 673Trans"/></a>
 </p>
-<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.7/673Trans-3.27.7.exe">Windows: 673Trans-3.27.7.exe</a></p>
-<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.7/673Trans-3.27.7-mac-aarch64.dmg">macOS Apple Silicon (M1/M2/M3…): .dmg</a> &middot; <a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.7/673Trans-3.27.7-mac-x64.dmg">macOS Intel: .dmg</a></p>
+<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.8/673Trans-3.27.8.exe">Windows: 673Trans-3.27.8.exe</a></p>
+<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.8/673Trans-3.27.8-mac-aarch64.dmg">macOS Apple Silicon (M1/M2/M3…): .dmg</a> &middot; <a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.8/673Trans-3.27.8-mac-x64.dmg">macOS Intel: .dmg</a></p>
 <p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases">Tất cả bản phát hành</a></p>
-<p align="center">Windows 10/11: chỉ cần 1 file <code>.exe</code>, không cần cài thêm gì &middot; macOS: bản thử nghiệm, xem hướng dẫn mở app ở mục bên dưới &middot; Phiên bản hiện tại: 3.27.7</p>
+<p align="center">Windows 10/11: chỉ cần 1 file <code>.exe</code>, không cần cài thêm gì &middot; macOS: bản thử nghiệm, xem hướng dẫn mở app ở mục bên dưới &middot; Phiên bản hiện tại: 3.27.8</p>
 
 <hr/>
 
@@ -103,7 +103,7 @@ Dịch, OCR và giọng nói đều có sẵn các hãng AI (DeepSeek, Claude, G
 </tr>
 </table>
 
-- Công tắc bật/tắt cho mọi dịch vụ (dịch, OCR, giọng nói, từ điển, sổ từ vựng) mà không cần xoá. Mặc định bật Google và Bing.
+- Công tắc bật/tắt cho mọi dịch vụ (dịch, OCR, giọng nói, từ điển, sổ từ vựng) mà không cần xoá. Mặc định bật Google. Bing cần khóa Azure Translator miễn phí (gói F0, 2 triệu ký tự/tháng) vì Microsoft đã đóng cổng dịch Bing miễn phí.
 - Có sẵn và bật sẵn: OCR của Windows (System) và **Tesseract** (dữ liệu tiếng Anh, Việt, Trung đã nhúng trong exe, chạy offline). OCR bằng AI: DeepSeek, Gemini, GPT, Claude, tương thích OpenAI.
 - Giọng đọc: ElevenLabs, OpenAI TTS, Gemini TTS, và **Local TTS**: giọng Edge neural **có sẵn trong exe** (cần mạng, không cần cài gì); ai có server riêng thì dùng thêm Piper offline và kho audio người thật.
 
