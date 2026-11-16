@@ -14,10 +14,10 @@
 <p align="center">
   <a href="https://github.com/nguyenguyen673/673Trans/releases/latest"><img src="https://img.shields.io/badge/%E2%AC%87%20T%E1%BA%A3i%20673Trans%20(.exe)-Releases-bff03a?style=for-the-badge&labelColor=0b2a12" alt="Tải 673Trans"/></a>
 </p>
-<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.9/673Trans-3.27.9.exe">Windows: 673Trans-3.27.9.exe</a></p>
-<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.9/673Trans-3.27.9-mac-aarch64.dmg">macOS Apple Silicon (M1/M2/M3…): .dmg</a> &middot; <a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.9/673Trans-3.27.9-mac-x64.dmg">macOS Intel: .dmg</a></p>
+<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.10/673Trans-3.27.10.exe">Windows: 673Trans-3.27.10.exe</a></p>
+<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.10/673Trans-3.27.10-mac-aarch64.dmg">macOS Apple Silicon (M1/M2/M3…): .dmg</a> &middot; <a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.10/673Trans-3.27.10-mac-x64.dmg">macOS Intel: .dmg</a></p>
 <p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases">Tất cả bản phát hành</a></p>
-<p align="center">Windows 10/11: chỉ cần 1 file <code>.exe</code>, không cần cài thêm gì &middot; macOS: bản thử nghiệm, xem hướng dẫn mở app ở mục bên dưới &middot; Phiên bản hiện tại: 3.27.9</p>
+<p align="center">Windows 10/11: chỉ cần 1 file <code>.exe</code>, không cần cài thêm gì &middot; macOS: bản thử nghiệm, xem hướng dẫn mở app ở mục bên dưới &middot; Phiên bản hiện tại: 3.27.10</p>
 
 <hr/>
 
