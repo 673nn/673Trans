@@ -36,7 +36,7 @@ import { store } from '../../utils/store';
 import { useConfig } from '../../hooks';
 import './style.css';
 
-const DEFAULT_TRANSLATE_SERVICES = ['google', 'bing'];
+const DEFAULT_TRANSLATE_SERVICES = ['google'];
 const DEFAULT_TTS_SERVICES = ['local_tts'];
 export const DEFAULT_ACTIONS = ['translate', 'replace', 'speak'];
 

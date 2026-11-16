@@ -1,6 +1,29 @@
 import { fetch } from '@tauri-apps/api/http';
 
-export async function translate(text, from, to) {
+// Official Microsoft Translator API with the user's own Azure key (free tier F0).
+async function translateWithKey(text, from, to, key, region) {
+    const headers = { 'Ocp-Apim-Subscription-Key': key, 'Content-Type': 'application/json' };
+    if (region) headers['Ocp-Apim-Subscription-Region'] = region;
+    const query = { 'api-version': '3.0', to };
+    if (from) query.from = from;
+    const res = await fetch('https://api.cognitive.microsofttranslator.com/translate', {
+        method: 'POST',
+        headers,
+        query,
+        body: { type: 'Json', payload: [{ Text: text }] },
+    });
+    if (res.ok && res.data?.[0]?.translations) {
+        return res.data[0].translations[0].text.trim();
+    }
+    throw `Http Request Error\nHttp Status: ${res.status}\n${JSON.stringify(res.data)}`;
+}
+
+export async function translate(text, from, to, options = {}) {
+    const config = options.config ?? {};
+    if (config.key && config.key.trim()) {
+        return translateWithKey(text, from, to, config.key.trim(), (config.region ?? '').trim());
+    }
+
     const token_url = 'https://edge.microsoft.com/translate/auth';
 
     let token = await fetch(token_url, {
@@ -55,7 +78,7 @@ export async function translate(text, from, to) {
             throw `Http Request Error\nHttp Status: ${res.status}\n${JSON.stringify(res.data)}`;
         }
     } else {
-        throw 'Get Token Failed';
+        throw 'Microsoft đã đóng cổng dịch Bing miễn phí (Get Token Failed). Mở Cài đặt > Dịch vụ > Bing và thêm khóa Azure Translator miễn phí, hoặc dùng Google / dịch vụ AI.';
     }
 }
 

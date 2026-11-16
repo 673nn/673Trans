@@ -283,7 +283,8 @@
             },
             "history": {
                 "label": "Lịch sử",
-                "title": "Lịch sử"
+                "title": "Lịch sử",
+                "rows_per_page": "Số hàng mỗi trang"
             },
             "backup": {
                 "label": "Sao lưu",
@@ -434,6 +435,15 @@
                     "title": "Tương thích OpenAI",
                     "request_path_hint": "vd: https://openrouter.ai/api/v1/chat/completions",
                     "model_hint": "ID mô hình của nhà cung cấp"
+                },
+                "bing": {
+                    "title": "Bing",
+                    "key": "Khóa Azure Translator",
+                    "key_placeholder": "Bắt buộc từ khi Microsoft đóng cổng miễn phí",
+                    "region": "Khu vực (Region)",
+                    "region_placeholder": "vd: southeastasia, để trống nếu là global",
+                    "key_help": "Microsoft đã đóng cổng dịch Bing miễn phí mà bản gốc dùng. Tạo tài nguyên Translator gói F0 (miễn phí 2 triệu ký tự/tháng) trên Azure rồi dán khóa vào đây.",
+                    "key_link": "Hướng dẫn tạo khóa"
                 }
             },
             "recognize": {

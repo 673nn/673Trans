@@ -228,7 +228,8 @@
             },
             "history": {
                 "label": "History",
-                "title": "History"
+                "title": "History",
+                "rows_per_page": "Rows per page"
             },
             "backup": {
                 "label": "Backup",
@@ -418,7 +419,13 @@
                     "title": "Lingva"
                 },
                 "bing": {
-                    "title": "Bing"
+                    "title": "Bing",
+                    "key": "Azure Translator key",
+                    "key_placeholder": "Required since Microsoft closed the free endpoint",
+                    "region": "Region",
+                    "region_placeholder": "e.g. southeastasia, empty for global",
+                    "key_help": "Microsoft closed the free Bing endpoint the original app used. Create a Translator resource on the free F0 tier (2 million characters a month) in Azure and paste its key here.",
+                    "key_link": "How to create a key"
                 },
                 "ollama": {
                     "title": "Ollama",

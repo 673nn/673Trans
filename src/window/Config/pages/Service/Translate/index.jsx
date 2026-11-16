@@ -24,7 +24,7 @@ export default function Translate(props) {
     // true while the dialog is adding a new service (the provider can still be switched)
     const [isAdding, setIsAdding] = useState(false);
     // now it's service instance list
-    const [translateServiceInstanceList, setTranslateServiceInstanceList] = useConfig('translate_service_list', ['google', 'bing']);
+    const [translateServiceInstanceList, setTranslateServiceInstanceList] = useConfig('translate_service_list', ['google']);
 
     const { t } = useTranslation();
     const toastStyle = useToastStyle();
