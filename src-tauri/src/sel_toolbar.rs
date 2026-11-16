@@ -239,6 +239,10 @@ mod imp {
         if code >= 0 && wparam.0 as u32 == WM_KEYUP {
             let info = &*(lparam.0 as *const KBDLLHOOKSTRUCT);
             let injected = info.flags.0 & LLKHF_INJECTED.0 != 0;
+            // Esc closes an in-place translation (src/inplace.rs)
+            if info.vkCode == 0x1B {
+                crate::inplace::dismiss();
+            }
             if info.vkCode == VK_A.0 as u32 && !injected {
                 let down = |vk: VIRTUAL_KEY| GetAsyncKeyState(vk.0 as i32) < 0;
                 if down(VK_CONTROL) && !down(VK_MENU) && !down(VK_SHIFT) && !down(VK_LWIN) {
@@ -486,6 +490,7 @@ mod imp {
         loop {
             match rx.recv_timeout(Duration::from_millis(500)) {
                 Ok(Ev::Down { x, y, ibeam, .. }) => {
+                    crate::inplace::dismiss();
                     if VISIBLE.load(SeqCst) && in_bar(x, y) {
                         // A click on one of our buttons, the webview handles it
                         pressed_in_bar = true;
@@ -576,6 +581,7 @@ mod imp {
                     shown_at = Instant::now();
                 }
                 Ok(Ev::Dismiss { x, y }) => {
+                    crate::inplace::dismiss();
                     if VISIBLE.load(SeqCst) && !STICKY.load(SeqCst) && !in_bar(x, y) {
                         hide();
                     }

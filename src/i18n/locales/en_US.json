@@ -359,19 +359,6 @@
                     "search": "Search apps",
                     "browse": "Pick .exe file",
                     "none_running": "No open apps found."
-                },
-                "hover": {
-                    "title": "Hover translate",
-                    "enable": "Turn on hover translate",
-                    "enable_desc": "Hold the trigger key over a line or paragraph in any app to see its translation in place.",
-                    "key": "Trigger key",
-                    "key_desc": "Hold this key alone (no other key) for about half a second while the mouse is over text.",
-                    "mode": "Display",
-                    "replace": "Replace in place",
-                    "below": "Bilingual below",
-                    "replace_desc": "The translation covers the original text.",
-                    "below_desc": "The translation shows right under the original text.",
-                    "note": "Move the mouse away or press Esc to hide. Works in browsers, Electron apps (Slack, Discord…), Office and most Windows apps; not in apps that draw their own UI (games, Figma, Adobe). Uses the first translate service that works."
                 }
             },
             "preview": "Preview",

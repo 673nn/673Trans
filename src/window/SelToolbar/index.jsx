@@ -281,8 +281,35 @@ export default function SelToolbar() {
         await invoke('sel_toolbar_hide');
     };
 
-    // Translate, then paste over the selection
-    const onReplace = () => translateThen('replace', (result) => invoke('sel_toolbar_paste', { text: result }));
+    // Translate, then paste over the selection. Text that can't be edited (chat messages,
+    // web pages) gets the translation drawn over it instead (src-tauri/src/inplace.rs).
+    const onReplace = async () => {
+        if (busy) return;
+        setBusy('replace');
+        await invoke('sel_toolbar_busy', { busy: true });
+        try {
+            const text = (await invoke('sel_toolbar_capture', { hide: false })).trim();
+            if (text === '') throw new Error(t('translate.no_selection'));
+            let probe = null;
+            try {
+                probe = await invoke('inplace_probe');
+            } catch {
+                probe = null;
+            }
+            const result = await translateForPaste(text);
+            if (probe && probe.found && !probe.editable) {
+                await invoke('sel_toolbar_hide');
+                await invoke('inplace_show', { result });
+            } else {
+                await invoke('sel_toolbar_paste', { text: result });
+            }
+        } catch (e) {
+            fail('replace', e);
+            await invoke('sel_toolbar_busy', { busy: false });
+        } finally {
+            setBusy(null);
+        }
+    };
 
     // Translate, then put the translation on the clipboard
     const onTranslateCopy = () =>

@@ -221,19 +221,6 @@
                     "search": "Tìm ứng dụng",
                     "browse": "Chọn file .exe",
                     "none_running": "Không tìm thấy ứng dụng nào đang mở."
-                },
-                "hover": {
-                    "title": "Dịch khi di chuột",
-                    "enable": "Bật dịch khi di chuột",
-                    "enable_desc": "Giữ phím kích hoạt và rê chuột lên một dòng hay đoạn văn ở bất kỳ app nào để xem bản dịch ngay tại chỗ.",
-                    "key": "Phím kích hoạt",
-                    "key_desc": "Giữ riêng phím này (không bấm kèm phím khác) khoảng nửa giây khi chuột đang ở trên chữ.",
-                    "mode": "Kiểu hiển thị",
-                    "replace": "Thay tại chỗ",
-                    "below": "Song ngữ bên dưới",
-                    "replace_desc": "Bản dịch phủ đè lên đúng đoạn chữ gốc.",
-                    "below_desc": "Bản dịch hiện ngay dưới đoạn chữ gốc, giữ nguyên chữ gốc.",
-                    "note": "Rê chuột ra ngoài hoặc bấm Esc để ẩn. Chạy với trình duyệt, app Electron (Slack, Discord…), Office và đa số app Windows; không lấy được chữ trong app tự vẽ giao diện (game, Figma, Adobe). Dùng dịch vụ dịch đầu tiên chạy được trong danh sách."
                 }
             },
             "recognize": {

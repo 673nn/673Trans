@@ -1,0 +1,84 @@
+// In-place translation (src-tauri/src/inplace.rs): the translation drawn over a read-only
+// selection, matching its position, font size and colours. Click it, click anywhere,
+// scroll or press Esc to close.
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { listen } from '@tauri-apps/api/event';
+import { invoke } from '@tauri-apps/api';
+
+function contrast(bg) {
+    const n = parseInt((bg || '#ffffff').slice(1), 16);
+    const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    return 0.299 * r + 0.587 * g + 0.114 * b > 150 ? '#111111' : '#f2f2f2';
+}
+
+export default function Inplace() {
+    const [data, setData] = useState(null); // {probe, result}
+    const textRef = useRef();
+
+    useEffect(() => {
+        document.documentElement.style.background = 'transparent';
+        document.body.style.background = 'transparent';
+        const un = listen('inplace_show', ({ payload }) => setData(payload));
+        return () => {
+            un.then((f) => f());
+        };
+    }, []);
+
+    // the translation can be longer than the original: grow the window to fit
+    useLayoutEffect(() => {
+        if (!data || !textRef.current) return;
+        const p = data.probe;
+        const el = textRef.current;
+        const height = Math.max(p.height, el.offsetTop + el.scrollHeight + 2);
+        invoke('inplace_resize', { width: p.width, height }).catch(() => {});
+    }, [data]);
+
+    if (!data) return null;
+    const p = data.probe;
+    const bg = p.bg || '#ffffff';
+    const fg = p.fg && p.fg !== bg ? p.fg : contrast(bg);
+    const first = p.lines[0] ?? { x: 0, y: 0, h: p.height };
+    const lineH = p.lines.reduce((s, l) => s + l.h, 0) / Math.max(1, p.lines.length);
+    const family = p.font_name ? `"${p.font_name}", "Segoe UI", Inter, sans-serif` : '"Segoe UI", Inter, sans-serif';
+
+    return (
+        <div
+            onMouseDown={() => invoke('inplace_hide')}
+            style={{ position: 'relative', width: '100vw', height: '100vh', cursor: 'default', userSelect: 'none' }}
+        >
+            {/* hide the original lines (and the selection highlight) */}
+            {p.lines.map((l, i) => (
+                <div
+                    key={i}
+                    style={{
+                        position: 'absolute',
+                        left: Math.max(0, l.x - 1),
+                        top: Math.max(0, l.y - 1),
+                        width: l.w + 2,
+                        height: l.h + 2,
+                        background: bg,
+                    }}
+                />
+            ))}
+            <div
+                ref={textRef}
+                style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: first.y,
+                    width: p.width,
+                    textIndent: first.x,
+                    color: fg,
+                    font: `${p.font_weight >= 600 ? 600 : 400} ${p.font_px}px/${Math.max(lineH, p.font_px * 1.2)}px ${family}`,
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
+                }}
+            >
+                {/* inline background: covers exactly the lines the translation uses */}
+                <span style={{ background: bg, boxDecorationBreak: 'clone', WebkitBoxDecorationBreak: 'clone' }}>
+                    {data.result}
+                </span>
+            </div>
+        </div>
+    );
+}
