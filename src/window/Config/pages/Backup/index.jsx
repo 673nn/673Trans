@@ -1,17 +1,8 @@
-import { readTextFile, BaseDirectory } from '@tauri-apps/api/fs';
-import { DropdownTrigger } from '@nextui-org/react';
-import { useDisclosure } from '@nextui-org/react';
+// Backup: three places to keep a backup ZIP, each in its own card on one page.
+import { Button, Card, CardBody, Chip, Input, useDisclosure } from '@nextui-org/react';
 import toast, { Toaster } from 'react-hot-toast';
-import { DropdownMenu } from '@nextui-org/react';
-import { DropdownItem } from '@nextui-org/react';
 import { useTranslation } from 'react-i18next';
-import { CardBody } from '@nextui-org/react';
-import { Dropdown } from '@nextui-org/react';
-import { warn } from 'tauri-plugin-log-api';
-import { Button } from '@nextui-org/react';
-import { Input } from '@nextui-org/react';
-import { Card } from '@nextui-org/react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { useConfig, useToastStyle } from '../../../../hooks';
 import { osType } from '../../../../utils/env';
@@ -21,93 +12,62 @@ import GDriveModal from './GDriveModal';
 import * as local from './utils/local';
 import * as gdrive from './utils/gdrive';
 
+const backupName = () => {
+    const d = new Date();
+    return `${osType}-${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}-${d.getHours()}-${d.getMinutes()}-${d.getSeconds()}`;
+};
+
+function Place({ title, status, desc, hint, children, form }) {
+    return (
+        <Card className='mb-[12px]'>
+            <CardBody className='px-[18px] py-[16px] gap-[10px]'>
+                <div className='flex items-center justify-between'>
+                    <h3 className='text-[16px] font-semibold'>{title}</h3>
+                    {status}
+                </div>
+                <p className='text-[13.5px] text-default-500 leading-relaxed'>{desc}</p>
+                {hint && <p className='text-[12.5px] text-default-400'>{hint}</p>}
+                {form}
+                <div className='flex items-center gap-[8px] flex-wrap'>{children}</div>
+            </CardBody>
+        </Card>
+    );
+}
+
 export default function Backup() {
-    const [backupType, setBackupType] = useConfig('backup_type', 'webdav');
     const [davUserName, setDavUserName] = useConfig('webdav_username', '');
     const [davPassword, setDavPassword] = useConfig('webdav_password', '');
     const [davUrl, setDavUrl] = useConfig('webdav_url', '');
     const [gdriveClientId, setGdriveClientId] = useConfig('gdrive_client_id', '');
     const [gdriveClientSecret, setGdriveClientSecret] = useConfig('gdrive_client_secret', '');
     const [gdriveRefreshToken, setGdriveRefreshToken] = useConfig('gdrive_refresh_token', '');
+    const [busy, setBusy] = useState(''); // 'local' | 'webdav' | 'gdrive' while exporting
     const [signingIn, setSigningIn] = useState(false);
-    const {
-        isOpen: isWebDavListOpen,
-        onOpen: onWebDavListOpen,
-        onOpenChange: onWebDavListOpenChange,
-    } = useDisclosure();
-    const {
-        isOpen: isGDriveListOpen,
-        onOpen: onGDriveListOpen,
-        onOpenChange: onGDriveListOpenChange,
-    } = useDisclosure();
-    const [uploading, setUploading] = useState(false);
+    const [davForm, setDavForm] = useState(false);
+    const [gForm, setGForm] = useState(false);
+    const dav = useDisclosure();
+    const gd = useDisclosure();
     const toastStyle = useToastStyle();
     const { t } = useTranslation();
+    const b = (k) => t(`config.backup.${k}`);
 
-    const onBackup = async () => {
-        setUploading(true);
-        const time = new Date();
-        const fileName = `${osType}-${time.getFullYear()}-${
-            time.getMonth() + 1
-        }-${time.getDate()}-${time.getHours()}-${time.getMinutes()}-${time.getSeconds()}`;
+    const loaded = [davUserName, davPassword, davUrl, gdriveClientId, gdriveClientSecret, gdriveRefreshToken].every(
+        (v) => v !== null
+    );
+    if (!loaded) return null;
 
-        let result;
-        switch (backupType) {
-            case 'webdav':
-                result = webdav.backup(davUrl, davUserName, davPassword, fileName + '.zip');
-                break;
-            case 'local':
-                result = local.backup(fileName);
-                break;
-            case 'gdrive':
-                if (!gdriveRefreshToken) {
-                    toast.error(t('config.backup.gdrive_login_first'), { style: toastStyle });
-                    setUploading(false);
-                    return;
-                }
-                result = gdrive.backup(gdriveClientId, gdriveClientSecret, gdriveRefreshToken, fileName + '.zip');
-                break;
-            default:
-                warn('Unknown backup type');
-                return;
+    const davReady = davUrl.trim() !== '';
+    const gReady = gdriveRefreshToken !== '';
+
+    const run = async (place, job, okText) => {
+        setBusy(place);
+        try {
+            await job();
+            toast.success(okText, { style: toastStyle });
+        } catch (e) {
+            if (String(e) !== 'Invalid File') toast.error(String(e), { style: toastStyle });
         }
-        result.then(
-            () => {
-                toast.success(t('config.backup.backup_success'), { style: toastStyle });
-                setUploading(false);
-            },
-            (e) => {
-                toast.error(e.toString(), { style: toastStyle });
-                setUploading(false);
-            }
-        );
-    };
-
-    const onBackupListOpen = () => {
-        switch (backupType) {
-            case 'webdav':
-                onWebDavListOpen();
-                break;
-            case 'local':
-                local.get().then(
-                    () => {
-                        toast.success(t('config.backup.load_success'), { style: toastStyle });
-                    },
-                    (e) => {
-                        toast.error(e.toString(), { style: toastStyle });
-                    }
-                );
-                break;
-            case 'gdrive':
-                if (!gdriveRefreshToken) {
-                    toast.error(t('config.backup.gdrive_login_first'), { style: toastStyle });
-                } else {
-                    onGDriveListOpen();
-                }
-                break;
-            default:
-                warn('Unknown backup type');
-        }
+        setBusy('');
     };
 
     const onGDriveLogin = async () => {
@@ -115,176 +75,191 @@ export default function Backup() {
         try {
             const token = await gdrive.login(gdriveClientId, gdriveClientSecret);
             setGdriveRefreshToken(token);
-            toast.success(t('config.backup.login_success'), { style: toastStyle });
+            toast.success(b('login_success'), { style: toastStyle });
+            setGForm(false);
         } catch (e) {
-            toast.error(e.toString(), { style: toastStyle });
+            toast.error(String(e), { style: toastStyle });
         }
         setSigningIn(false);
     };
 
-    useEffect(() => {
-        // Aliyun backup was removed; fall back to WebDav for anyone who had it selected
-        if (backupType === 'aliyun') setBackupType('webdav');
-    }, [backupType]);
+    const field = (label, value, setValue, type = 'text') => (
+        <Input
+            size='sm'
+            variant='bordered'
+            label={label}
+            type={type}
+            value={value}
+            onValueChange={setValue}
+        />
+    );
+    const statusChip = (ok, okText, offText) => (
+        <Chip
+            size='sm'
+            variant='flat'
+            color={ok ? 'success' : 'default'}
+        >
+            {ok ? okText : offText}
+        </Chip>
+    );
 
     return (
-        <Card className='mb-[10px]'>
+        <>
             <Toaster />
-            <CardBody>
-                <div className='config-item'>
-                    <h3 className='my-auto'>{t('config.backup.type')}</h3>
-                    {backupType !== null && backupType !== 'aliyun' && (
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <Button variant='bordered'>{t(`config.backup.${backupType}`)}</Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                aria-label='backup type'
-                                onAction={(key) => {
-                                    setBackupType(key);
-                                }}
-                            >
-                                <DropdownItem key='webdav'>{t('config.backup.webdav')}</DropdownItem>
-                                <DropdownItem key='gdrive'>{t('config.backup.gdrive')}</DropdownItem>
-                                <DropdownItem key='local'>{t('config.backup.local')}</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                    )}
-                </div>
-                <div className={backupType !== 'webdav' ? 'hidden' : ''}>
-                    <div className='config-item'>
-                        <h3 className='my-auto'>{t('config.backup.webdav_url')}</h3>
-                        {davUrl !== null && (
-                            <Input
-                                variant='bordered'
-                                value={davUrl}
-                                label={t('config.backup.webdav_url')}
-                                onValueChange={(v) => {
-                                    setDavUrl(v);
-                                }}
-                                className='max-w-[300px]'
-                            />
-                        )}
-                    </div>
-                    <div className='config-item'>
-                        <h3 className='my-auto'>{t('config.backup.username')}</h3>
-                        {davUserName !== null && (
-                            <Input
-                                variant='bordered'
-                                value={davUserName}
-                                label={t('config.backup.username')}
-                                onValueChange={(v) => {
-                                    setDavUserName(v);
-                                }}
-                                className='max-w-[300px]'
-                            />
-                        )}
-                    </div>
-                    <div className='config-item'>
-                        <h3 className='my-auto'>{t('config.backup.password')}</h3>
-                        {davPassword !== null && (
-                            <Input
-                                type='password'
-                                variant='bordered'
-                                value={davPassword}
-                                label={t('config.backup.password')}
-                                onValueChange={(v) => {
-                                    setDavPassword(v);
-                                }}
-                                className='max-w-[300px]'
-                            />
-                        )}
-                    </div>
-                </div>
-                <div className={backupType !== 'gdrive' ? 'hidden' : ''}>
-                    <p className='text-xs text-default-500 mb-2'>{t('config.backup.gdrive_hint')}</p>
-                    <div className='config-item'>
-                        <h3 className='my-auto'>Client ID</h3>
-                        {gdriveClientId !== null && (
-                            <Input
-                                variant='bordered'
-                                value={gdriveClientId}
-                                label='Client ID'
-                                onValueChange={(v) => {
-                                    setGdriveClientId(v);
-                                }}
-                                className='max-w-[300px]'
-                            />
-                        )}
-                    </div>
-                    <div className='config-item'>
-                        <h3 className='my-auto'>Client Secret</h3>
-                        {gdriveClientSecret !== null && (
-                            <Input
-                                type='password'
-                                variant='bordered'
-                                value={gdriveClientSecret}
-                                label='Client Secret'
-                                onValueChange={(v) => {
-                                    setGdriveClientSecret(v);
-                                }}
-                                className='max-w-[300px]'
-                            />
-                        )}
-                    </div>
-                    <div className='config-item'>
-                        <h3 className='my-auto'>
-                            {gdriveRefreshToken ? t('config.backup.gdrive_logged_in') : t('config.backup.gdrive_not_logged_in')}
-                        </h3>
-                        <div className='flex gap-2'>
-                            <Button
-                                color='primary'
-                                variant='flat'
-                                isLoading={signingIn}
-                                onPress={onGDriveLogin}
-                            >
-                                {t('config.backup.gdrive_login')}
-                            </Button>
-                            {gdriveRefreshToken && (
-                                <Button
-                                    variant='light'
-                                    onPress={() => {
-                                        setGdriveRefreshToken('');
-                                    }}
-                                >
-                                    {t('config.backup.logout')}
-                                </Button>
-                            )}
+            <h4 className='config-section-title'>{b('places')}</h4>
+
+            <Place
+                title={b('local_title')}
+                desc={b('local_desc')}
+            >
+                <div className='flex-1' />
+                <Button
+                    size='sm'
+                    color='danger'
+                    variant='flat'
+                    onPress={() => run('', () => local.get(), b('load_success'))}
+                >
+                    {b('import_file')}
+                </Button>
+                <Button
+                    size='sm'
+                    color='primary'
+                    isLoading={busy === 'local'}
+                    onPress={() => run('local', () => local.backup(backupName()), b('backup_success'))}
+                >
+                    {b('export_file')}
+                </Button>
+            </Place>
+
+            <Place
+                title='WebDAV'
+                status={statusChip(davReady, b('configured'), b('not_configured'))}
+                desc={b('webdav_desc')}
+                hint={!davReady && !davForm ? b('webdav_hint') : null}
+                form={
+                    davForm && (
+                        <div className='grid grid-cols-1 gap-[8px] max-w-[460px]'>
+                            {field(b('webdav_url'), davUrl, setDavUrl)}
+                            {field(b('username'), davUserName, setDavUserName)}
+                            {field(b('password'), davPassword, setDavPassword, 'password')}
                         </div>
-                    </div>
-                </div>
-                <div className='flex justify-around'>
-                    <Button
-                        color='success'
-                        variant='flat'
-                        isLoading={uploading}
-                        onPress={onBackup}
-                    >
-                        {t('config.backup.backup')}
-                    </Button>
-                    <Button
-                        color='primary'
-                        variant='flat'
-                        onPress={onBackupListOpen}
-                    >
-                        {t('config.backup.restore')}
-                    </Button>
-                </div>
-            </CardBody>
+                    )
+                }
+            >
+                <Button
+                    size='sm'
+                    variant='flat'
+                    onPress={() => setDavForm(!davForm)}
+                >
+                    {davForm ? b('done') : b('configure')}
+                </Button>
+                <div className='flex-1' />
+                <Button
+                    size='sm'
+                    variant='flat'
+                    isDisabled={!davReady}
+                    onPress={dav.onOpen}
+                >
+                    {b('browse')}
+                </Button>
+                <Button
+                    size='sm'
+                    color='primary'
+                    variant={davReady ? 'solid' : 'flat'}
+                    isDisabled={!davReady}
+                    isLoading={busy === 'webdav'}
+                    onPress={() =>
+                        run('webdav', () => webdav.backup(davUrl, davUserName, davPassword, backupName() + '.zip'), b('backup_success'))
+                    }
+                >
+                    {b('export_now')}
+                </Button>
+            </Place>
+
+            <Place
+                title='Google Drive'
+                status={statusChip(gReady, b('gdrive_logged_in'), b('gdrive_not_logged_in'))}
+                desc={b('gdrive_desc')}
+                hint={!gReady && !gForm ? b('gdrive_need_login') : null}
+                form={
+                    gForm && (
+                        <div className='flex flex-col gap-[8px] max-w-[460px]'>
+                            <p className='text-[12.5px] text-default-500'>{b('gdrive_hint')}</p>
+                            {field('Client ID', gdriveClientId, setGdriveClientId)}
+                            {field('Client Secret', gdriveClientSecret, setGdriveClientSecret, 'password')}
+                            <div className='flex gap-[8px]'>
+                                <Button
+                                    size='sm'
+                                    color='primary'
+                                    variant='flat'
+                                    isLoading={signingIn}
+                                    isDisabled={!gdriveClientId.trim()}
+                                    onPress={onGDriveLogin}
+                                >
+                                    {b('gdrive_login')}
+                                </Button>
+                                {gReady && (
+                                    <Button
+                                        size='sm'
+                                        variant='light'
+                                        onPress={() => setGdriveRefreshToken('')}
+                                    >
+                                        {b('logout')}
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+                    )
+                }
+            >
+                <Button
+                    size='sm'
+                    variant='flat'
+                    onPress={() => setGForm(!gForm)}
+                >
+                    {gForm ? b('done') : b('configure')}
+                </Button>
+                <div className='flex-1' />
+                <Button
+                    size='sm'
+                    variant='flat'
+                    isDisabled={!gReady}
+                    onPress={gd.onOpen}
+                >
+                    {b('browse')}
+                </Button>
+                <Button
+                    size='sm'
+                    color='primary'
+                    variant={gReady ? 'solid' : 'flat'}
+                    isDisabled={!gReady}
+                    isLoading={busy === 'gdrive'}
+                    onPress={() =>
+                        run(
+                            'gdrive',
+                            () => gdrive.backup(gdriveClientId, gdriveClientSecret, gdriveRefreshToken, backupName() + '.zip'),
+                            b('backup_success')
+                        )
+                    }
+                >
+                    {b('export_now')}
+                </Button>
+            </Place>
+
             <WebDavModal
-                isOpen={isWebDavListOpen}
-                onOpenChange={onWebDavListOpenChange}
+                isOpen={dav.isOpen}
+                onOpenChange={dav.onOpenChange}
                 url={davUrl}
                 username={davUserName}
                 password={davPassword}
             />
             <GDriveModal
-                isOpen={isGDriveListOpen}
-                onOpenChange={onGDriveListOpenChange}
+                isOpen={gd.isOpen}
+                onOpenChange={gd.onOpenChange}
                 clientId={gdriveClientId}
                 clientSecret={gdriveClientSecret}
                 refreshToken={gdriveRefreshToken}
             />
-        </Card>
+        </>
     );
 }
