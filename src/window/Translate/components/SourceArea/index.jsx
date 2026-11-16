@@ -10,7 +10,7 @@ import { MdContentCopy } from 'react-icons/md';
 import { MdSmartButton } from 'react-icons/md';
 import { useTranslation } from 'react-i18next';
 import { HiTranslate } from 'react-icons/hi';
-import { LuDelete } from 'react-icons/lu';
+import { LuDelete, LuFoldVertical, LuUnfoldVertical } from 'react-icons/lu';
 import { invoke } from '@tauri-apps/api';
 import { atom, useAtom } from 'jotai';
 import { getServiceName, getServiceSouceType, ServiceSourceType } from '../../../../utils/service_instance';
@@ -44,6 +44,9 @@ export default function SourceArea(props) {
     const [ttsServiceList] = useEnabledList('tts_service_list', ['local_tts']);
     const [hideWindow] = useConfig('translate_hide_window', false);
     const [hideSource] = useConfig('translate_hide_source', false);
+    // Collapse the source text to one line (toggle in the footer, remembered); click the line to read it
+    const [collapseSource, setCollapseSource] = useConfig('translate_collapse_source', false);
+    const [peek, setPeek] = useState(false);
     const [ttsPluginInfo, setTtsPluginInfo] = useState();
     const [windowType, setWindowType] = useAtom(windowTypeAtom);
     const toastStyle = useToastStyle();
@@ -251,9 +254,16 @@ export default function SourceArea(props) {
         }
     }, [deleteNewline, incrementalTranslate, recognizeLanguage, recognizeServiceList, hideWindow]);
 
+    const collapsed = !!collapseSource && !peek && windowType !== '[INPUT_TRANSLATE]' && sourceText !== '';
+
     useEffect(() => {
         textAreaRef.current.style.height = '50px';
         textAreaRef.current.style.height = textAreaRef.current.scrollHeight + 'px';
+    }, [sourceText, collapsed]);
+
+    // new text (not typed here): fold it again
+    useEffect(() => {
+        if (document.activeElement !== textAreaRef.current) setPeek(false);
     }, [sourceText]);
 
     const detect_language = async (text) => {
@@ -382,10 +392,20 @@ export default function SourceArea(props) {
             >
                 <Toaster />
                 <CardBody className='bg-content1 p-[12px] pb-0 max-h-[40vh] overflow-y-auto'>
+                    {collapsed && (
+                        <div
+                            className={`text-[${appFontSize}px] text-default-500 cursor-pointer`}
+                            style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}
+                            title={t('translate.show_source')}
+                            onClick={() => setPeek(true)}
+                        >
+                            {sourceText}
+                        </div>
+                    )}
                     <textarea
                         autoFocus
                         ref={textAreaRef}
-                        className={`text-[${appFontSize}px] bg-content1 h-full resize-none outline-none`}
+                        className={`text-[${appFontSize}px] bg-content1 h-full resize-none outline-none ${collapsed ? 'hidden' : ''}`}
                         value={sourceText}
                         onKeyDown={keyDown}
                         onChange={(e) => {
@@ -453,6 +473,26 @@ export default function SourceArea(props) {
                                     <LuDelete className='text-[16px]' />
                                 </Button>
                             </Tooltip>
+                            {windowType !== '[INPUT_TRANSLATE]' && collapseSource !== null && (
+                                <Tooltip content={t(collapseSource ? 'translate.expand_source' : 'translate.collapse_source')}>
+                                    <Button
+                                        variant='light'
+                                        size='sm'
+                                        isIconOnly
+                                        className={collapseSource ? 'text-primary' : ''}
+                                        onPress={() => {
+                                            setCollapseSource(!collapseSource);
+                                            setPeek(false);
+                                        }}
+                                    >
+                                        {collapseSource ? (
+                                            <LuUnfoldVertical className='text-[16px]' />
+                                        ) : (
+                                            <LuFoldVertical className='text-[16px]' />
+                                        )}
+                                    </Button>
+                                </Tooltip>
+                            )}
                         </ButtonGroup>
                         {detectLanguage !== '' && (
                             <Chip

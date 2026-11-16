@@ -774,7 +774,10 @@
             "mode_polish": "Polish",
             "mode_summarize": "Summarize",
             "mode_unsupported": "This mode only works with AI services (OpenAI, Claude, Gemini, DeepSeek, Ollama…). Click the button again to go back to translating.",
-            "mode_rewrite": "Rewrite & spelling"
+            "mode_rewrite": "Rewrite & spelling",
+            "collapse_source": "Always collapse the source text",
+            "expand_source": "Always show the full source text",
+            "show_source": "Click to read it all"
         },
         "recognize": {
             "recognize": "Recognize",
