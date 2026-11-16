@@ -94,12 +94,15 @@ export default function Screenshot() {
     const [current, setCurrent] = useState(null); // shape being drawn
     const [textEdit, setTextEdit] = useState(null); // {x, y, value}
     const [notice, setNotice] = useState('');
-    const [tbSize, setTbSize] = useState({ w: 640, h: 80 });
+    const [sizes, setSizes] = useState({ v: [40, 380], h: [240, 40], s: [300, 40] });
+    const [stylePanel, setStylePanel] = useState(false);
 
     const imgRef = useRef();
     const magRef = useRef();
     const canvasRef = useRef();
-    const tbRef = useRef();
+    const vRef = useRef();
+    const hRef = useRef();
+    const sRef = useRef();
     const monitorRef = useRef(null);
     const drag = useRef(null);
     const busy = useRef(false);
@@ -493,11 +496,9 @@ export default function Screenshot() {
     }, [cursor, opts.magnifier]);
 
     useLayoutEffect(() => {
-        if (tbRef.current) {
-            const w = tbRef.current.offsetWidth;
-            const h = tbRef.current.offsetHeight;
-            if (w !== tbSize.w || h !== tbSize.h) setTbSize({ w, h });
-        }
+        const m = (r, d) => (r.current ? [r.current.offsetWidth, r.current.offsetHeight] : d);
+        const next = { v: m(vRef, sizes.v), h: m(hRef, sizes.h), s: m(sRef, sizes.s) };
+        if (JSON.stringify(next) !== JSON.stringify(sizes)) setSizes(next);
     });
 
     // ---- render ------------------------------------------------------------------------------------
@@ -519,19 +520,40 @@ export default function Screenshot() {
         };
     };
 
-    // toolbar below the selection, else above it, else inside its bottom edge
-    const tbPos = (() => {
+    // Drawing tools: a column right of the selection (else left of it, else inside).
+    // Actions: a row under the selection, aligned to its right edge (else above, else inside).
+    const GAP = 6;
+    const vPos = (() => {
         if (!n) return { left: 0, top: 0 };
-        const left = Math.max(6, Math.min(screen.width - tbSize.w - 6, n.r - tbSize.w));
-        let top = n.b + 8;
-        if (top + tbSize.h > screen.height - 4) top = n.t - 8 - tbSize.h;
-        if (top < 4) top = n.b - tbSize.h - 8;
+        const [w, h] = sizes.v;
+        let left = n.r + GAP;
+        if (left + w > screen.width - 4) left = n.l - GAP - w;
+        if (left < 4) left = n.r - w - GAP;
+        const top = Math.max(4, Math.min(screen.height - h - 4, n.t));
         return { left, top };
+    })();
+    const hPos = (() => {
+        if (!n) return { left: 0, top: 0 };
+        const [w, h] = sizes.h;
+        const left = Math.max(4, Math.min(screen.width - w - 4, n.r - w));
+        let top = n.b + GAP;
+        if (top + h > screen.height - 4) top = n.t - GAP - h;
+        if (top < 4) top = n.b - h - GAP;
+        return { left, top };
+    })();
+    const sPos = (() => {
+        const [w] = sizes.s;
+        const [vw] = sizes.v;
+        let left = vPos.left + vw + GAP;
+        if (left + w > screen.width - 4) left = vPos.left - GAP - w;
+        // level with the color button (third from the bottom of the column)
+        const top = vPos.top + sizes.v[1] - 3 * 29 - 3;
+        return { left: Math.max(4, left), top: Math.max(4, Math.min(screen.height - sizes.s[1] - 4, top)) };
     })();
     const sizeTool = tool === 'text' ? 'font' : 'stroke';
     const sizeVal = sizeTool === 'font' ? font : stroke;
     const setSizeVal = (v) => (sizeTool === 'font' ? setFont(v) : setStroke(v));
-    const showStyle = tool !== 'move';
+    const showStyle = stylePanel;
 
     const Btn = ({ title, onClick, active, children, accent }) => (
         <button
@@ -539,7 +561,7 @@ export default function Screenshot() {
             title={title}
             onMouseDown={(e) => e.stopPropagation()}
             onClick={onClick}
-            className={`w-[32px] h-[32px] flex items-center justify-center rounded-[7px] text-[17px] transition-colors ${
+            className={`w-[28px] h-[28px] flex items-center justify-center rounded-[6px] text-[15px] transition-colors ${
                 active
                     ? 'bg-[#bff03a] text-black'
                     : accent
@@ -550,7 +572,9 @@ export default function Screenshot() {
             {children}
         </button>
     );
-    const Sep = () => <div className='w-px h-[20px] bg-white/15 mx-[4px]' />;
+    const Sep = () => <div className='w-px h-[18px] bg-white/15 mx-[3px]' />;
+    const HSep = () => <div className='h-px w-[18px] bg-white/15 my-[3px]' />;
+    const BAR = 'fixed select-none flex p-[3px] gap-[1px] rounded-[9px] bg-[#1c1c20]/95 border border-white/10 shadow-xl';
 
     return (
         <>
@@ -738,15 +762,15 @@ export default function Screenshot() {
                 />
             )}
 
-            {/* editor toolbar */}
+            {/* editor: drawing tools (column) */}
             {phase === 'edit' && n && (
-                <div
-                    ref={tbRef}
-                    className='fixed select-none flex flex-col gap-[6px] items-end'
-                    style={{ left: tbPos.left, top: tbPos.top }}
-                    onMouseDown={(e) => e.stopPropagation()}
-                >
-                    <div className='flex items-center gap-[2px] p-[4px] rounded-[10px] bg-[#1c1c20]/95 border border-white/10 shadow-xl'>
+                <>
+                    <div
+                        ref={vRef}
+                        className={`${BAR} flex-col items-center`}
+                        style={{ left: vPos.left, top: vPos.top }}
+                        onMouseDown={(e) => e.stopPropagation()}
+                    >
                         {TOOLS.map(([key, Icon]) => (
                             <Btn
                                 key={key}
@@ -755,12 +779,27 @@ export default function Screenshot() {
                                 onClick={() => {
                                     if (textEdit) commitText();
                                     setTool(key);
+                                    if (key === 'move') setStylePanel(false);
                                 }}
                             >
                                 <Icon />
                             </Btn>
                         ))}
-                        <Sep />
+                        <HSep />
+                        <button
+                            type='button'
+                            title={t('screenshot.style')}
+                            onMouseDown={(e) => e.stopPropagation()}
+                            onClick={() => setStylePanel(!stylePanel)}
+                            className={`w-[28px] h-[28px] flex items-center justify-center rounded-[6px] ${
+                                stylePanel ? 'bg-white/15' : 'hover:bg-white/10'
+                            }`}
+                        >
+                            <span
+                                className='w-[16px] h-[16px] rounded-[4px]'
+                                style={{ background: color, boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.35)' }}
+                            />
+                        </button>
                         <Btn
                             title={t('screenshot.undo')}
                             onClick={undo}
@@ -773,7 +812,15 @@ export default function Screenshot() {
                         >
                             <LuRedo2 className={redo.length ? '' : 'opacity-35'} />
                         </Btn>
-                        <Sep />
+                    </div>
+
+                    {/* editor: actions (row) */}
+                    <div
+                        ref={hRef}
+                        className={`${BAR} items-center`}
+                        style={{ left: hPos.left, top: hPos.top }}
+                        onMouseDown={(e) => e.stopPropagation()}
+                    >
                         <Btn
                             title={t('screenshot.ocr')}
                             onClick={() => doAction('recognize')}
@@ -813,8 +860,14 @@ export default function Screenshot() {
                             <LuCheck />
                         </Btn>
                     </div>
+
                     {showStyle && (
-                        <div className='flex items-center gap-[6px] px-[8px] py-[5px] rounded-[10px] bg-[#1c1c20]/95 border border-white/10 shadow-xl'>
+                        <div
+                            ref={sRef}
+                            className='fixed select-none flex items-center gap-[6px] px-[8px] py-[5px] rounded-[9px] bg-[#1c1c20]/95 border border-white/10 shadow-xl'
+                            style={{ left: sPos.left, top: sPos.top }}
+                            onMouseDown={(e) => e.stopPropagation()}
+                        >
                             {tool !== 'mosaic' &&
                                 PRESET_COLORS.map((c) => (
                                     <button
@@ -822,7 +875,7 @@ export default function Screenshot() {
                                         type='button'
                                         title={c}
                                         onClick={() => setColor(c)}
-                                        className='w-[18px] h-[18px] rounded-full'
+                                        className='w-[16px] h-[16px] rounded-full'
                                         style={{
                                             background: c,
                                             boxShadow:
@@ -856,7 +909,7 @@ export default function Screenshot() {
                                 max={sizeTool === 'font' ? 72 : 30}
                                 value={sizeVal}
                                 onChange={(e) => setSizeVal(+e.target.value)}
-                                className='w-[110px] accent-[#bff03a]'
+                                className='w-[96px] accent-[#bff03a]'
                             />
                             <span className='text-[12px] text-white w-[22px] text-right tabular-nums'>{sizeVal}</span>
                             <div
@@ -874,10 +927,16 @@ export default function Screenshot() {
                             </div>
                         </div>
                     )}
+
                     {notice && (
-                        <div className='text-[12px] px-[8px] py-[4px] rounded bg-black/80 text-white'>{notice}</div>
+                        <div
+                            className='fixed pointer-events-none text-[12px] px-[8px] py-[4px] rounded bg-black/80 text-white'
+                            style={{ left: hPos.left, top: hPos.top + sizes.h[1] + 4 }}
+                        >
+                            {notice}
+                        </div>
                     )}
-                </div>
+                </>
             )}
 
             {opts.magnifier && selecting && (
