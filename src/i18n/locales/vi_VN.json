@@ -221,6 +221,11 @@
                     "search": "Tìm ứng dụng",
                     "browse": "Chọn file .exe",
                     "none_running": "Không tìm thấy ứng dụng nào đang mở."
+                },
+                "inplace": {
+                    "title": "Dịch và thay thế trên chữ chỉ đọc",
+                    "keep": "Giữ bản dịch khi bấm ra ngoài",
+                    "keep_desc": "Với tin nhắn Slack, trang web… bản dịch được vẽ đè lên chữ gốc. Bật: bản dịch vẫn ở đó khi bạn bấm chỗ khác trong app, tạm ẩn khi chuyển sang app khác và hiện lại khi quay về. Bấm vào bản dịch, cuộn trang hoặc nhấn Esc để về chữ gốc."
                 }
             },
             "recognize": {

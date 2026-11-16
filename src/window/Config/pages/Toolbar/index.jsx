@@ -4,6 +4,7 @@ import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { LuGripVertical } from 'react-icons/lu';
 import PreviewBox from '../../PreviewBox';
 import AppFilter from './AppFilter';
+import InplaceSettings from './InplaceSettings';
 import { Switch, Input, Slider, Tabs, Tab } from '@nextui-org/react';
 import { useTranslation } from 'react-i18next';
 import React from 'react';
@@ -279,6 +280,7 @@ export default function Toolbar() {
                 )}
             </Section>
 
+            <InplaceSettings />
             <AppFilter />
         </>
     );

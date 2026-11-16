@@ -5,6 +5,28 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api';
 
+import './fonts/fonts.css';
+
+// CSS font stack for the font the app reported. Chromium apps report their CSS list
+// ("Slack-Lato, Slack-Fractions, appleLogo, sans-serif"); their web fonts aren't installed,
+// so the known ones map to the bundled copies (./fonts).
+function fontStack(name) {
+    const list = (name || '')
+        .split(',')
+        .map((f) => f.trim().replace(/^["']|["']$/g, ''))
+        .filter(Boolean);
+    const out = [];
+    for (const f of list) {
+        const low = f.toLowerCase();
+        if (low.includes('lato')) out.push('Lato');
+        else if (low.includes('roboto') || low.includes('google sans') || low.includes('product sans')) out.push('Roboto');
+        else if (low === 'inter' || low.includes('inter var')) out.push('Inter Variable', 'Inter');
+        else if (!['sans-serif', 'serif', 'system-ui', 'applelogo'].includes(low)) out.push(f);
+    }
+    out.push('Segoe UI', 'sans-serif');
+    return [...new Set(out)].map((f) => (f === 'sans-serif' ? f : `"${f}"`)).join(', ');
+}
+
 function contrast(bg) {
     const n = parseInt((bg || '#ffffff').slice(1), 16);
     const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
@@ -39,7 +61,7 @@ export default function Inplace() {
     const fg = p.fg && p.fg !== bg ? p.fg : contrast(bg);
     const first = p.lines[0] ?? { x: 0, y: 0, h: p.height };
     const lineH = p.lines.reduce((s, l) => s + l.h, 0) / Math.max(1, p.lines.length);
-    const family = p.font_name ? `"${p.font_name}", "Segoe UI", Inter, sans-serif` : '"Segoe UI", Inter, sans-serif';
+    const family = fontStack(p.font_name);
 
     return (
         <div
@@ -69,7 +91,7 @@ export default function Inplace() {
                     width: p.width,
                     textIndent: first.x,
                     color: fg,
-                    font: `${p.font_weight >= 600 ? 600 : 400} ${p.font_px}px/${Math.max(lineH, p.font_px * 1.2)}px ${family}`,
+                    font: `${p.font_weight >= 600 ? 700 : 400} ${p.font_px}px/${Math.max(lineH, p.font_px * 1.2)}px ${family}`,
                     whiteSpace: 'pre-wrap',
                     wordBreak: 'break-word',
                 }}

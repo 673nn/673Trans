@@ -359,6 +359,11 @@
                     "search": "Search apps",
                     "browse": "Pick .exe file",
                     "none_running": "No open apps found."
+                },
+                "inplace": {
+                    "title": "Translate and replace on read-only text",
+                    "keep": "Keep the translation when clicking elsewhere",
+                    "keep_desc": "On Slack messages, web pages… the translation is drawn over the original text. On: it stays when you click elsewhere in the app, hides while another app is in front and comes back with it. Click the translation, scroll or press Esc to see the original."
                 }
             },
             "preview": "Preview",
