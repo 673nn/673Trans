@@ -1,5 +1,5 @@
 import { listen } from '@tauri-apps/api/event';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { store } from '../utils/store';
 import { useConfig } from './useConfig';
@@ -20,6 +20,7 @@ export async function filterEnabled(list) {
 export function useEnabledList(key, defaultValue) {
     const [list] = useConfig(key, defaultValue);
     const [enabled, setEnabled] = useState(null);
+    const last = useRef(null);
 
     useEffect(() => {
         if (list === null) return;
@@ -27,7 +28,14 @@ export function useEnabledList(key, defaultValue) {
         const refresh = async () => {
             await store.load();
             const f = await filterEnabled(list);
-            if (alive) setEnabled(f);
+            // Only a real change may update the state: a new array with the same items would
+            // re-run effects that depend on it (moving the translate window focuses it, and
+            // that used to fetch the selected text again and re-translate everything).
+            const sig = JSON.stringify(f);
+            if (alive && sig !== last.current) {
+                last.current = sig;
+                setEnabled(f);
+            }
         };
         refresh();
         // the switches live in another window: re-check whenever this one gets focus
