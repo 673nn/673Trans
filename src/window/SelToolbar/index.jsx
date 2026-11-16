@@ -95,7 +95,7 @@ async function translateWith(instanceKey, text, sourceLanguage, targetLanguage, 
 
 // Translate with the user's services (same order as the translate window),
 // using the first one that gives plain text.
-async function translateForPaste(text) {
+export async function translateForPaste(text) {
     const serviceList = (await store.get('translate_service_list')) ?? DEFAULT_TRANSLATE_SERVICES;
     const sourceLanguage = (await store.get('translate_source_language')) ?? 'auto';
     let targetLanguage = (await store.get('translate_target_language')) ?? 'zh_cn';

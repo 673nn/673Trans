@@ -8,6 +8,7 @@ mod cmd;
 mod config;
 mod error;
 mod hotkey;
+mod hover;
 mod lang_detect;
 mod screenshot;
 mod sel_toolbar;
@@ -24,6 +25,7 @@ use clipboard::*;
 use cmd::*;
 use config::*;
 use hotkey::*;
+use hover::{hover_translate_hide, hover_translate_resize, init_hover_translate};
 use lang_detect::*;
 use log::info;
 use once_cell::sync::OnceCell;
@@ -111,6 +113,7 @@ fn main() {
             updater::check_update(app.handle());
             // Floating toolbar shown after selecting text anywhere
             init_selection_toolbar();
+            init_hover_translate();
             if let Some(engine) = get("translate_detect_engine") {
                 if engine.as_str().unwrap() == "local" {
                     init_lang_detect();
@@ -143,6 +146,8 @@ fn main() {
             get_screenshot_mode,
             screenshot_action,
             take_precapture,
+            hover_translate_hide,
+            hover_translate_resize,
             test_network,
             list_windows,
             list_running_apps,

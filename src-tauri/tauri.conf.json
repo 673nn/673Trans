@@ -8,7 +8,7 @@
     },
     "package": {
         "productName": "673Trans",
-        "version": "3.27.7"
+        "version": "3.27.8"
     },
     "tauri": {
         "allowlist": {
