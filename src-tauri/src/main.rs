@@ -27,7 +27,7 @@ use hotkey::*;
 use lang_detect::*;
 use log::info;
 use once_cell::sync::OnceCell;
-use screenshot::screenshot;
+use screenshot::{list_windows, screenshot};
 use sel_toolbar::*;
 use server::*;
 use std::sync::Mutex;
@@ -103,14 +103,7 @@ fn main() {
                     .show()
                     .unwrap(),
             }
-            match get("proxy_enable") {
-                Some(v) => {
-                    if v.as_bool().unwrap() && get("proxy_host").map_or(false, |host| !host.as_str().unwrap().is_empty()) {
-                        let _ = set_proxy();
-                    }
-                }
-                None => {}
-            }
+            cmd::apply_network_inner();
             // Unpack the built-in English-Vietnamese dictionary on first run
             cmd::ensure_bundled_dict();
             // Update check against this fork's GitHub releases (Config > General > check_update)
@@ -142,8 +135,9 @@ fn main() {
             get_base64,
             copy_img,
             system_ocr,
-            set_proxy,
-            unset_proxy,
+            apply_network,
+            test_network,
+            list_windows,
             run_binary,
             local_tts_start,
             edge_tts,

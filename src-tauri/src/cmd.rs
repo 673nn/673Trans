@@ -94,36 +94,122 @@ pub fn copy_img(app_handle: tauri::AppHandle, width: usize, height: usize) -> Re
     Ok(result)
 }
 
-#[tauri::command]
-pub fn set_proxy() -> Result<bool, ()> {
-    let host = match get("proxy_host") {
-        Some(v) => v.as_str().unwrap().to_string(),
-        None => return Err(()),
-    };
-    let port = match get("proxy_port") {
-        Some(v) => v.as_i64().unwrap(),
-        None => return Err(()),
-    };
-    let no_proxy = match get("no_proxy") {
-        Some(v) => v.as_str().unwrap().to_string(),
-        None => return Err(()),
-    };
-    let proxy = format!("http://{}:{}", host, port);
+const PROXY_VARS: [&str; 8] = [
+    "http_proxy",
+    "https_proxy",
+    "all_proxy",
+    "no_proxy",
+    "HTTP_PROXY",
+    "HTTPS_PROXY",
+    "ALL_PROXY",
+    "NO_PROXY",
+];
 
-    std::env::set_var("http_proxy", &proxy);
-    std::env::set_var("https_proxy", &proxy);
-    std::env::set_var("all_proxy", &proxy);
-    std::env::set_var("no_proxy", &no_proxy);
-    Ok(true)
+fn encode_userinfo(s: &str) -> String {
+    let mut out = String::new();
+    for b in s.bytes() {
+        match b {
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => out.push(b as char),
+            _ => out.push_str(&format!("%{:02X}", b)),
+        }
+    }
+    out
+}
+
+/// Apply Config > Network to this process. Requests made afterwards (new HTTP clients) follow it.
+///   direct : never use a proxy
+///   system : leave the system / environment proxy alone (the default)
+///   custom : the proxy typed in settings (HTTP or SOCKS5, optional login)
+pub fn apply_network_inner() {
+    use std::sync::OnceLock;
+    static ORIGINAL: OnceLock<Vec<(&'static str, Option<String>)>> = OnceLock::new();
+    let original = ORIGINAL.get_or_init(|| PROXY_VARS.iter().map(|k| (*k, std::env::var(k).ok())).collect());
+
+    let text = |key: &str| get(key).and_then(|v| v.as_str().map(|s| s.trim().to_string())).unwrap_or_default();
+    let mode = match get("proxy_mode").and_then(|v| v.as_str().map(|s| s.to_string())) {
+        Some(m) => m,
+        // older settings only had an on/off switch
+        None => {
+            if get("proxy_enable").and_then(|v| v.as_bool()).unwrap_or(false) {
+                "custom".to_string()
+            } else {
+                "system".to_string()
+            }
+        }
+    };
+
+    for k in PROXY_VARS {
+        std::env::remove_var(k);
+    }
+    match mode.as_str() {
+        "direct" => {
+            std::env::set_var("NO_PROXY", "*");
+            std::env::set_var("no_proxy", "*");
+        }
+        "custom" => {
+            let host = text("proxy_host");
+            let host = host
+                .trim_start_matches("http://")
+                .trim_start_matches("https://")
+                .trim_start_matches("socks5://")
+                .trim_end_matches('/')
+                .to_string();
+            let port = get("proxy_port")
+                .and_then(|v| v.as_i64().or_else(|| v.as_str().and_then(|s| s.parse().ok())))
+                .unwrap_or(0);
+            if host.is_empty() || port <= 0 {
+                return;
+            }
+            let scheme = if text("proxy_type") == "socks5" { "socks5h" } else { "http" };
+            let user = if get("proxy_auth").and_then(|v| v.as_bool()).unwrap_or(false) { text("proxy_username") } else { String::new() };
+            let auth = if user.is_empty() {
+                String::new()
+            } else {
+                format!("{}:{}@", encode_userinfo(&user), encode_userinfo(&text("proxy_password")))
+            };
+            let proxy = format!("{}://{}{}:{}", scheme, auth, host, port);
+            let no_proxy = text("no_proxy");
+            for k in ["http_proxy", "https_proxy", "all_proxy", "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY"] {
+                std::env::set_var(k, &proxy);
+            }
+            if !no_proxy.is_empty() {
+                std::env::set_var("no_proxy", &no_proxy);
+                std::env::set_var("NO_PROXY", &no_proxy);
+            }
+        }
+        _ => {
+            for (k, v) in original {
+                if let Some(v) = v {
+                    std::env::set_var(k, v);
+                }
+            }
+        }
+    }
 }
 
 #[tauri::command]
-pub fn unset_proxy() -> Result<bool, ()> {
-    std::env::remove_var("http_proxy");
-    std::env::remove_var("https_proxy");
-    std::env::remove_var("all_proxy");
-    std::env::remove_var("no_proxy");
-    Ok(true)
+pub fn apply_network() -> Result<(), ()> {
+    apply_network_inner();
+    Ok(())
+}
+
+/// Connection test for the Network page: how long a tiny request takes with the current settings.
+#[tauri::command(async)]
+pub async fn test_network() -> Result<u64, String> {
+    let client = reqwest::Client::builder()
+        .timeout(std::time::Duration::from_secs(8))
+        .build()
+        .map_err(|e| e.to_string())?;
+    let start = std::time::Instant::now();
+    let res = client
+        .get("https://www.gstatic.com/generate_204")
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+    if res.status().as_u16() >= 400 {
+        return Err(format!("HTTP {}", res.status().as_u16()));
+    }
+    Ok(start.elapsed().as_millis() as u64)
 }
 
 #[tauri::command]

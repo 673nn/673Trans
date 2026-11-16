@@ -72,16 +72,6 @@
                 },
                 "transparent": "Transparent Effect",
                 "dev_mode": "Developer Mode",
-                "proxy": {
-                    "title": "Proxy",
-                    "host": "Host",
-                    "port": "Port",
-                    "username": "Username",
-                    "password": "Password",
-                    "no_proxy": "No Proxy"
-                },
-                "proxy_change": "The proxy has been changed, Restart the application for the changes to take effect",
-                "proxy_error": "Please fill in the host and port",
                 "tray_click_event": "Tray Click Event",
                 "event": {
                     "config": "Preference",
@@ -93,7 +83,6 @@
                 "accent": "Accent Color",
                 "section_startup": "Startup",
                 "section_appearance": "Appearance",
-                "section_network": "Network",
                 "server_port_desc": "Port of the local HTTP API other apps use to call 673Trans.",
                 "transparent_desc": "Makes the settings sidebar slightly see-through.",
                 "dev_mode_desc": "Allows F12 to open the developer tools in any window."
@@ -339,7 +328,45 @@
             },
             "preview": "Preview",
             "preview_show": "Click to show",
-            "preview_hide": "Click to hide"
+            "preview_hide": "Click to hide",
+            "network": {
+                "label": "Network",
+                "title": "Network settings",
+                "proxy_server": "Proxy server",
+                "mode": "Connection mode",
+                "mode_desc": "Applies to all translate, OCR, update and backup requests.",
+                "direct": "Direct connection",
+                "system": "System proxy",
+                "custom": "Custom proxy",
+                "type": "Proxy type",
+                "host": "Host",
+                "port": "Port",
+                "no_proxy": "Bypass proxy for",
+                "no_proxy_desc": "Comma-separated addresses.",
+                "auth": "Proxy authentication",
+                "auth_enable": "Proxy needs a username and password",
+                "username": "Username",
+                "password": "Password",
+                "test": "Test connection",
+                "test_desc": "Sends one tiny request to check the current network reaches the Internet.",
+                "test_button": "Test",
+                "test_ok": "Connected ({{ms}} ms)"
+            },
+            "screenshot": {
+                "label": "Screenshot",
+                "title": "Screenshot settings",
+                "section_selection": "Selection",
+                "crosshair": "Crosshair guides",
+                "crosshair_desc": "Show horizontal/vertical lines through the cursor to line up the selection.",
+                "magnifier": "Magnifier",
+                "magnifier_desc": "Zoom into the pixels around the cursor, with coordinates.",
+                "size": "Selection size in pixels",
+                "size_desc": "Show width × height (real pixels) while dragging.",
+                "handles": "Show resize handles on the selection",
+                "handles_desc": "After dragging, resize with the 8 handles or move the box; press Enter or double-click to confirm.",
+                "detect": "Window detection",
+                "detect_desc": "Hover to highlight a window and click to capture it whole (Windows only)."
+            }
         },
         "updater": {
             "title": "Check Update",
@@ -710,6 +737,9 @@
             "history_empty": "No words yet.",
             "save": "Save to vocabulary book",
             "save_no_service": "No vocabulary service is enabled (Services → Vocabulary)."
+        },
+        "screenshot": {
+            "adjust_hint": "Drag to adjust • Enter or double-click to confirm • Esc to cancel"
         }
     }
 }
