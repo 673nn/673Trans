@@ -33,6 +33,18 @@ function contrast(bg) {
     return 0.299 * r + 0.587 * g + 0.114 * b > 150 ? '#111111' : '#f2f2f2';
 }
 
+// The probe is in physical px: convert with this window's own scale
+function toCss(raw, k) {
+    const d = (v) => v / k;
+    return {
+        ...raw,
+        width: d(raw.width),
+        height: d(raw.height),
+        font_px: d(raw.font_px),
+        lines: raw.lines.map((l) => ({ x: d(l.x), y: d(l.y), w: d(l.w), h: d(l.h) })),
+    };
+}
+
 export default function Inplace() {
     const [data, setData] = useState(null); // {probe, result}
     const textRef = useRef();
@@ -41,10 +53,15 @@ export default function Inplace() {
         document.documentElement.style.background = 'transparent';
         document.body.style.background = 'transparent';
         const un = listen('inplace_show', ({ payload }) => setData(payload));
+        // moving to a monitor with another scale changes devicePixelRatio (and fires resize)
+        const onResize = () => setDpr(window.devicePixelRatio || 1);
+        window.addEventListener('resize', onResize);
         return () => {
             un.then((f) => f());
+            window.removeEventListener('resize', onResize);
         };
     }, []);
+    const [dpr, setDpr] = useState(window.devicePixelRatio || 1);
 
     const [fontPx, setFontPx] = useState(null);
 
@@ -53,7 +70,8 @@ export default function Inplace() {
     useLayoutEffect(() => {
         if (!data || !textRef.current) return;
         let alive = true;
-        const p = data.probe;
+        const k = window.devicePixelRatio || 1;
+        const p = toCss(data.probe, k);
         const el = textRef.current;
         const fit = () => {
             if (!alive) return;
@@ -68,16 +86,16 @@ export default function Inplace() {
             el.style.fontSize = `${size}px`;
             setFontPx(size);
             const height = Math.max(p.height, el.offsetTop + el.scrollHeight + 2);
-            invoke('inplace_resize', { width: p.width, height }).catch(() => {});
+            invoke('inplace_resize', { width: data.probe.width, height: height * k }).catch(() => {});
         };
         document.fonts.ready.then(fit);
         return () => {
             alive = false;
         };
-    }, [data]);
+    }, [data, dpr]);
 
     if (!data) return null;
-    const p = data.probe;
+    const p = toCss(data.probe, dpr);
     const bg = p.bg || '#ffffff';
     const fg = p.fg && p.fg !== bg ? p.fg : contrast(bg);
     const first = p.lines[0] ?? { x: 0, y: 0, h: p.height };
@@ -109,7 +127,7 @@ export default function Inplace() {
                     position: 'absolute',
                     left: 0,
                     top: first.y,
-                    width: p.width,
+                    width: Math.min(p.width, window.innerWidth),
                     textIndent: first.x,
                     color: fg,
                     font: `${p.font_weight >= 600 ? 700 : 400} ${fontPx ?? p.font_px}px/${Math.max(lineH, p.font_px * 1.2)}px ${family}`,
