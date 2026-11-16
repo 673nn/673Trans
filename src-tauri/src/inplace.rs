@@ -19,7 +19,7 @@ pub struct Line {
     pub h: f64,
 }
 
-/// What the probe found. `editable`: paste as usual. Otherwise the selection, in CSS px
+/// What the probe found. `editable`: paste as usual. Otherwise the selection, in physical px
 /// relative to its bounding box (`lines`), with font and colours.
 #[derive(serde::Serialize, Clone, Default)]
 pub struct Probe {
@@ -225,13 +225,15 @@ mod imp {
             let scale = dx as f64 / 96.0;
 
             let attr = |id| -> Option<VARIANT> { range.GetAttributeValue(id).ok() };
-            // UIA font size is in points: 1pt = 1/72 inch = 96/72 CSS px
-            let avg_h = lines.iter().map(|r| (r.bottom - r.top) as f64).sum::<f64>() / lines.len() as f64 / scale;
+            // Everything is sent in physical px; the page divides by its own devicePixelRatio
+            // (the overlay may sit on a monitor with another scale than where it was created).
+            // UIA font size is in points: 1pt = 1/72 inch.
+            let avg_h = lines.iter().map(|r| (r.bottom - r.top) as f64).sum::<f64>() / lines.len() as f64;
             let font_px = attr(UIA_FontSizeAttributeId)
                 .and_then(|v| f64::try_from(&v).ok())
                 .filter(|p| *p > 3.0 && *p < 200.0)
-                .map(|p| p * 96.0 / 72.0)
-                .unwrap_or((avg_h * 0.72).clamp(10.0, 28.0));
+                .map(|p| p * dx as f64 / 72.0)
+                .unwrap_or((avg_h * 0.72).clamp(10.0 * scale, 28.0 * scale));
             let font_name = attr(UIA_FontNameAttributeId)
                 .and_then(|v| windows::core::BSTR::try_from(&v).ok())
                 .map(|b| b.to_string())
@@ -245,18 +247,18 @@ mod imp {
                 .unwrap_or_default();
 
             let rel = |r: &RECT| Line {
-                x: (r.left - bbox.left) as f64 / scale,
-                y: (r.top - bbox.top) as f64 / scale,
-                w: (r.right - r.left) as f64 / scale,
-                h: (r.bottom - r.top) as f64 / scale,
+                x: (r.left - bbox.left) as f64,
+                y: (r.top - bbox.top) as f64,
+                w: (r.right - r.left) as f64,
+                h: (r.bottom - r.top) as f64,
             };
             let probe = Probe {
                 editable: false,
                 found: true,
                 text: range.GetText(8000).map(|b| b.to_string()).unwrap_or_default(),
                 lines: lines.iter().map(rel).collect(),
-                width: (bbox.right - bbox.left) as f64 / scale,
-                height: (bbox.bottom - bbox.top) as f64 / scale,
+                width: (bbox.right - bbox.left) as f64,
+                height: (bbox.bottom - bbox.top) as f64,
                 font_px,
                 font_name,
                 font_weight,
@@ -375,20 +377,16 @@ mod imp {
         }
     }
 
-    /// The page measured the translation: grow the window (CSS px) to fit it.
+    /// The page measured the translation: grow the window (physical px) to fit it.
     pub fn resize(width: f64, height: f64) {
         let raw = HWND_RAW.load(SeqCst);
         if raw == 0 || !VISIBLE.load(SeqCst) {
             return;
         }
         let r = *SHOWN.lock().unwrap();
-        let scale = APP
-            .get()
-            .and_then(|a| a.get_window(LABEL))
-            .and_then(|w| w.scale_factor().ok())
-            .unwrap_or(1.0);
-        let w = ((width * scale).ceil() as i32).max(r.right - r.left);
-        let h = ((height * scale).ceil() as i32).max(r.bottom - r.top);
+        // physical px, measured by the page with its own devicePixelRatio
+        let w = (width.ceil() as i32).max(r.right - r.left);
+        let h = (height.ceil() as i32).max(r.bottom - r.top);
         unsafe {
             let _ = SetWindowPos(hwnd(raw), HWND_TOPMOST, r.left, r.top, w, h, SWP_NOACTIVATE | SWP_SHOWWINDOW);
         }
