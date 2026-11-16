@@ -469,7 +469,8 @@ mod imp {
                 .filter(|s| !s.is_empty())
                 .any(|s| s == name || s.trim_end_matches(".exe") == bare);
         if allow_mode {
-            !listed
+            // an empty allow list means no restriction, not "nowhere"
+            !listed && list.split([',', ';', '\n']).any(|s| !s.trim().is_empty())
         } else {
             listed
         }

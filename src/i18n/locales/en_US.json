@@ -354,7 +354,7 @@
                     "remove": "Remove",
                     "empty": "No apps added yet.",
                     "empty_block": "The toolbar works in every app. Add apps to turn it off there.",
-                    "empty_allow": "The allow list is empty, so the toolbar shows nowhere. Add apps to turn it on there.",
+                    "empty_allow": "The allow list is empty, so the toolbar still works in every app. Add apps to use it only there.",
                     "picker_desc": "Apps that are open now. Click to add, or pick an .exe file.",
                     "search": "Search apps",
                     "browse": "Pick .exe file",

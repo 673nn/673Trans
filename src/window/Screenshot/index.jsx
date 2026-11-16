@@ -107,6 +107,7 @@ export default function Screenshot() {
     const drag = useRef(null);
     const busy = useRef(false);
     const lastMouseUp = useRef(0);
+    const ctrlDownAt = useRef(0);
 
     // ---- setup ------------------------------------------------------------------------------------
     useEffect(() => {
@@ -282,6 +283,7 @@ export default function Screenshot() {
 
     useEffect(() => {
         const onKey = (e) => {
+            if (e.key === 'Control' && !e.repeat) ctrlDownAt.current = Date.now();
             if (textEdit) return; // the text box handles its own keys
             const ctrl = e.ctrlKey || e.metaKey;
             if (e.key === 'Escape') {
@@ -293,7 +295,11 @@ export default function Screenshot() {
                 else if (ctrl && e.key.toLowerCase() === 'z' && !e.shiftKey) undo();
                 else if (ctrl && (e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey))) redoIt();
                 else if (ctrl && e.key.toLowerCase() === 'c') {
-                    if (Date.now() - lastMouseUp.current > 1200) void doCopy();
+                    // a tool's Ctrl+C arrives as Ctrl and C at the same instant, shortly after
+                    // a mouse release; a person presses Ctrl clearly before C
+                    const now = Date.now();
+                    const injected = now - ctrlDownAt.current < 30 && now - lastMouseUp.current < 1500;
+                    if (!injected) void doCopy();
                 }
                 else if (ctrl && e.key.toLowerCase() === 's') {
                     e.preventDefault();
