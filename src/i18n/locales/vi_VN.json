@@ -308,7 +308,22 @@
                 "gdrive_login": "Đăng nhập Google",
                 "gdrive_logged_in": "Đã đăng nhập",
                 "gdrive_not_logged_in": "Chưa đăng nhập",
-                "gdrive_hint": "Tạo OAuth client (loại Desktop app) trong Google Cloud Console, bật Drive API, rồi dán Client ID và Secret vào đây. Bản sao lưu nằm trong thư mục ẩn của app, app không thấy file khác của bạn."
+                "gdrive_hint": "Tạo OAuth client (loại Desktop app) trong Google Cloud Console, bật Drive API, rồi dán Client ID và Secret vào đây. Bản sao lưu nằm trong thư mục ẩn của app, app không thấy file khác của bạn.",
+                "places": "Vị trí sao lưu",
+                "local_title": "Tệp cục bộ",
+                "local_desc": "Lưu gói ZIP trên máy này hoặc khôi phục một gói đã xuất trước đó.",
+                "import_file": "Nhập tệp",
+                "export_file": "Xuất ra tệp",
+                "configured": "Đã cấu hình",
+                "not_configured": "Chưa cấu hình",
+                "webdav_desc": "Lưu các bản sao lưu vào dịch vụ WebDAV (Nextcloud, Synology, Koofr…), rồi duyệt hoặc khôi phục khi cần.",
+                "webdav_hint": "Cấu hình địa chỉ WebDAV để bật sao lưu từ xa.",
+                "configure": "Cấu hình",
+                "done": "Xong",
+                "browse": "Duyệt bản sao lưu",
+                "export_now": "Xuất ngay",
+                "gdrive_desc": "Lưu bản sao lưu vào thư mục ẩn của app trên Google Drive của bạn, rồi duyệt hoặc khôi phục khi cần.",
+                "gdrive_need_login": "Cấu hình Client ID và đăng nhập Google để bật sao lưu lên Drive."
             },
             "about": {
                 "label": "Giới thiệu",

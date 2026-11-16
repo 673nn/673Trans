@@ -253,7 +253,22 @@
                 "gdrive_login": "Sign in with Google",
                 "gdrive_logged_in": "Signed in",
                 "gdrive_not_logged_in": "Not signed in",
-                "gdrive_hint": "Create an OAuth client (Desktop app) in Google Cloud Console, enable the Drive API, then paste its Client ID and Secret. Backups are stored in a hidden app folder; this app cannot see your other files."
+                "gdrive_hint": "Create an OAuth client (Desktop app) in Google Cloud Console, enable the Drive API, then paste its Client ID and Secret. Backups are stored in a hidden app folder; this app cannot see your other files.",
+                "places": "Backup locations",
+                "local_title": "Local file",
+                "local_desc": "Save a ZIP on this device or restore one exported earlier.",
+                "import_file": "Import file",
+                "export_file": "Export to file",
+                "configured": "Configured",
+                "not_configured": "Not configured",
+                "webdav_desc": "Keep backups on a WebDAV service (Nextcloud, Synology, Koofr…), then browse or restore them when needed.",
+                "webdav_hint": "Set a WebDAV address to turn on remote backup.",
+                "configure": "Configure",
+                "done": "Done",
+                "browse": "Browse backups",
+                "export_now": "Export now",
+                "gdrive_desc": "Keep backups in the app's hidden folder on your Google Drive, then browse or restore them when needed.",
+                "gdrive_need_login": "Add a Client ID and sign in with Google to back up to Drive."
             },
             "about": {
                 "label": "About",
