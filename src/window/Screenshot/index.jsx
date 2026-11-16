@@ -103,6 +103,7 @@ export default function Screenshot() {
     const monitorRef = useRef(null);
     const drag = useRef(null);
     const busy = useRef(false);
+    const lastMouseUp = useRef(0);
 
     // ---- setup ------------------------------------------------------------------------------------
     useEffect(() => {
@@ -260,6 +261,15 @@ export default function Screenshot() {
     };
 
     // ---- keyboard ----------------------------------------------------------------------------------
+    // Select-to-translate tools (ours or other apps) send Ctrl+C right after a mouse drag
+    // to grab the selected text. Here that would copy and close the capture as soon as
+    // the region is drawn, so a Ctrl+C that follows a mouse release is not from the user.
+    useEffect(() => {
+        const up = () => (lastMouseUp.current = Date.now());
+        window.addEventListener('mouseup', up, true);
+        return () => window.removeEventListener('mouseup', up, true);
+    }, []);
+
     useEffect(() => {
         const onKey = (e) => {
             if (textEdit) return; // the text box handles its own keys
@@ -272,7 +282,9 @@ export default function Screenshot() {
                 if (e.key === 'Enter') void doDone();
                 else if (ctrl && e.key.toLowerCase() === 'z' && !e.shiftKey) undo();
                 else if (ctrl && (e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey))) redoIt();
-                else if (ctrl && e.key.toLowerCase() === 'c') void doCopy();
+                else if (ctrl && e.key.toLowerCase() === 'c') {
+                    if (Date.now() - lastMouseUp.current > 1200) void doCopy();
+                }
                 else if (ctrl && e.key.toLowerCase() === 's') {
                     e.preventDefault();
                     void doSave();
