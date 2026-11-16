@@ -37,12 +37,6 @@ export default function General() {
     const [transparent, setTransparent] = useConfig('transparent', true);
     const [devMode, setDevMode] = useConfig('dev_mode', false);
     const [trayClickEvent, setTrayClickEvent] = useConfig('tray_click_event', 'config');
-    const [proxyEnable, setProxyEnable] = useConfig('proxy_enable', false);
-    const [proxyHost, setProxyHost] = useConfig('proxy_host', '');
-    const [proxyPort, setProxyPort] = useConfig('proxy_port', '');
-    const [proxyUsername, setProxyUsername] = useConfig('proxy_username', '');
-    const [proxyPassword, setProxyPassword] = useConfig('proxy_password', '');
-    const [noProxy, setNoProxy] = useConfig('no_proxy', 'localhost,127.0.0.1');
     const { t, i18n } = useTranslation();
     const [appAccent, setAppAccent] = useConfig('app_accent', DEFAULT_ACCENT);
     const { setTheme, resolvedTheme } = useTheme();
@@ -509,114 +503,6 @@ export default function General() {
                                 isSelected={devMode}
                                 onValueChange={(v) => {
                                     setDevMode(v);
-                                }}
-                            />
-                        )}
-                    </div>
-                </CardBody>
-            </Card>
-            <h4 className='config-section-title'>{t('config.general.section_network')}</h4>
-            <Card className='mb-[10px]'>
-                <CardBody>
-                    <div className='config-item'>
-                        <h3>{t('config.general.proxy.title')}</h3>
-                        {proxyEnable !== null && (
-                            <Switch
-                                isSelected={proxyEnable}
-                                onValueChange={async (v) => {
-                                    if (v) {
-                                        if (proxyHost === '' || proxyPort === '') {
-                                            setProxyEnable(false);
-                                            toast.error(t('config.general.proxy_error'), {
-                                                duration: 3000,
-                                                style: toastStyle,
-                                            });
-                                            return;
-                                        } else {
-                                            setProxyEnable(v);
-                                        }
-                                    } else {
-                                        setProxyEnable(v);
-                                    }
-                                    toast.success(t('config.general.proxy_change'), {
-                                        duration: 1000,
-                                        style: toastStyle,
-                                    });
-                                }}
-                            />
-                        )}
-                    </div>
-                    <div className='config-item'>
-                        {proxyHost !== null && (
-                            <Input
-                                type='url'
-                                variant='bordered'
-                                isRequired
-                                label={t('config.general.proxy.host')}
-                                startContent={<span>http://</span>}
-                                value={proxyHost}
-                                onValueChange={(v) => {
-                                    setProxyHost(v);
-                                }}
-                                className='mr-2'
-                            />
-                        )}
-                        {proxyPort !== null && (
-                            <Input
-                                type='number'
-                                variant='bordered'
-                                isRequired
-                                label={t('config.general.proxy.port')}
-                                value={proxyPort}
-                                onValueChange={(v) => {
-                                    if (parseInt(v) > 65535) {
-                                        setProxyPort(65535);
-                                    } else if (parseInt(v) < 0) {
-                                        setProxyPort('');
-                                    } else {
-                                        setProxyPort(parseInt(v));
-                                    }
-                                }}
-                                className='ml-2'
-                            />
-                        )}
-                    </div>
-                    <div className='config-item'>
-                        {proxyUsername !== null && (
-                            <Input
-                                type='text'
-                                variant='bordered'
-                                isDisabled
-                                label={t('config.general.proxy.username')}
-                                value={proxyUsername}
-                                onValueChange={(v) => {
-                                    setProxyUsername(v);
-                                }}
-                                className='mr-2'
-                            />
-                        )}
-                        {proxyPassword !== null && (
-                            <Input
-                                type='password'
-                                variant='bordered'
-                                isDisabled
-                                label={t('config.general.proxy.password')}
-                                value={proxyPassword}
-                                onValueChange={(v) => {
-                                    setProxyPassword(v);
-                                }}
-                                className='ml-2'
-                            />
-                        )}
-                    </div>
-                    <div className='config-item'>
-                        {noProxy !== null && (
-                            <Input
-                                variant='bordered'
-                                label={t('config.general.proxy.no_proxy')}
-                                value={noProxy}
-                                onValueChange={(v) => {
-                                    setNoProxy(v);
                                 }}
                             />
                         )}

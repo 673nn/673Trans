@@ -14,10 +14,10 @@
 <p align="center">
   <a href="https://github.com/nguyenguyen673/673Trans/releases/latest"><img src="https://img.shields.io/badge/%E2%AC%87%20T%E1%BA%A3i%20673Trans%20(.exe)-Releases-bff03a?style=for-the-badge&labelColor=0b2a12" alt="Tải 673Trans"/></a>
 </p>
-<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.5/673Trans-3.27.5.exe">Windows: 673Trans-3.27.5.exe</a></p>
-<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.5/673Trans-3.27.5-mac-aarch64.dmg">macOS Apple Silicon (M1/M2/M3…): .dmg</a> &middot; <a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.5/673Trans-3.27.5-mac-x64.dmg">macOS Intel: .dmg</a></p>
+<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.6/673Trans-3.27.6.exe">Windows: 673Trans-3.27.6.exe</a></p>
+<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.6/673Trans-3.27.6-mac-aarch64.dmg">macOS Apple Silicon (M1/M2/M3…): .dmg</a> &middot; <a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.6/673Trans-3.27.6-mac-x64.dmg">macOS Intel: .dmg</a></p>
 <p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases">Tất cả bản phát hành</a></p>
-<p align="center">Windows 10/11: chỉ cần 1 file <code>.exe</code>, không cần cài thêm gì &middot; macOS: bản thử nghiệm, xem hướng dẫn mở app ở mục bên dưới &middot; Phiên bản hiện tại: 3.27.5</p>
+<p align="center">Windows 10/11: chỉ cần 1 file <code>.exe</code>, không cần cài thêm gì &middot; macOS: bản thử nghiệm, xem hướng dẫn mở app ở mục bên dưới &middot; Phiên bản hiện tại: 3.27.6</p>
 
 <hr/>
 
@@ -125,6 +125,11 @@ Dịch, OCR và giọng nói đều có sẵn các hãng AI (DeepSeek, Claude, G
 
 - Vị trí riêng cho chữ nhập và chữ chọn/ảnh chụp, ẩn vùng nhập hoặc thanh ngôn ngữ, tự chỉnh chiều cao, ghim mặc định, đóng khi mất tiêu điểm.
 - Tiếng Việt, font Inter có sẵn, màu chủ đạo chọn được, sáng/tối, cỡ chữ kéo theo từng px, nhớ kích thước cửa sổ.
+
+### Chụp màn hình và mạng
+
+- **Cài đặt chụp màn hình**: đường dẫn chữ thập, kính lúp, hiện kích thước vùng chọn (pixel), nút chỉnh kích thước vùng chọn (kéo 8 nút / di chuyển, Enter hoặc nhấp đúp để xác nhận, Esc để hủy), phát hiện cửa sổ (rê chuột tô sáng, nhấp để chụp cả cửa sổ).
+- **Cài đặt mạng**: kết nối trực tiếp / proxy hệ thống / proxy tùy chỉnh (HTTP hoặc SOCKS5, có xác thực), danh sách bỏ qua proxy, nút kiểm tra kết nối. Áp dụng ngay, không cần khởi động lại.
 
 ### Tự cập nhật
 

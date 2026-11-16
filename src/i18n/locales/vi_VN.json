@@ -72,16 +72,6 @@
                 },
                 "transparent": "Hiệu ứng trong suốt",
                 "dev_mode": "Chế độ nhà phát triển",
-                "proxy": {
-                    "title": "Proxy",
-                    "host": "Máy chủ",
-                    "port": "Cổng",
-                    "username": "Tên đăng nhập",
-                    "password": "Mật khẩu",
-                    "no_proxy": "Không dùng proxy cho"
-                },
-                "proxy_change": "Đã đổi proxy, hãy khởi động lại ứng dụng để áp dụng",
-                "proxy_error": "Hãy nhập máy chủ và cổng",
                 "tray_click_event": "Khi nhấp vào biểu tượng khay",
                 "event": {
                     "config": "Mở cài đặt",
@@ -93,7 +83,6 @@
                 "accent": "Màu chủ đạo",
                 "section_startup": "Khởi động",
                 "section_appearance": "Giao diện",
-                "section_network": "Mạng",
                 "server_port_desc": "Cổng của HTTP API nội bộ để app khác gọi 673Trans.",
                 "transparent_desc": "Làm thanh bên của cửa sổ cài đặt hơi trong suốt.",
                 "dev_mode_desc": "Cho phép bấm F12 để mở công cụ nhà phát triển ở mọi cửa sổ."
@@ -339,7 +328,45 @@
             },
             "preview": "Xem trước",
             "preview_show": "Bấm để xem",
-            "preview_hide": "Bấm để thu gọn"
+            "preview_hide": "Bấm để thu gọn",
+            "network": {
+                "label": "Cài đặt mạng",
+                "title": "Cài đặt mạng",
+                "proxy_server": "Máy chủ proxy",
+                "mode": "Chế độ kết nối",
+                "mode_desc": "Áp dụng cho mọi dịch vụ dịch, OCR, cập nhật và sao lưu.",
+                "direct": "Kết nối trực tiếp",
+                "system": "Proxy hệ thống",
+                "custom": "Proxy tùy chỉnh",
+                "type": "Loại proxy",
+                "host": "Máy chủ",
+                "port": "Cổng",
+                "no_proxy": "Bỏ qua proxy cho",
+                "no_proxy_desc": "Các địa chỉ cách nhau bằng dấu phẩy.",
+                "auth": "Xác thực proxy",
+                "auth_enable": "Proxy yêu cầu tên đăng nhập",
+                "username": "Tên đăng nhập",
+                "password": "Mật khẩu",
+                "test": "Kiểm tra kết nối",
+                "test_desc": "Gửi một yêu cầu nhỏ để xem mạng hiện tại có ra được Internet không.",
+                "test_button": "Kiểm tra",
+                "test_ok": "Kết nối tốt ({{ms}} ms)"
+            },
+            "screenshot": {
+                "label": "Chụp màn hình",
+                "title": "Cài đặt chụp màn hình",
+                "section_selection": "Vùng chọn",
+                "crosshair": "Đường dẫn chữ thập",
+                "crosshair_desc": "Hiện hai đường kẻ ngang/dọc đi qua con trỏ để căn vùng chọn.",
+                "magnifier": "Kính lúp",
+                "magnifier_desc": "Phóng to điểm ảnh quanh con trỏ kèm tọa độ.",
+                "size": "Kích thước vùng chọn tính bằng pixel",
+                "size_desc": "Hiện chiều rộng × chiều cao (pixel thật) khi kéo chọn.",
+                "handles": "Hiển thị các nút điều chỉnh kích thước vùng chọn",
+                "handles_desc": "Sau khi kéo, có thể kéo 8 nút hoặc di chuyển vùng; nhấn Enter hoặc nhấp đúp để xác nhận.",
+                "detect": "Phát hiện cửa sổ",
+                "detect_desc": "Rê chuột để tô sáng cửa sổ, nhấp để chọn cả cửa sổ (chỉ Windows)."
+            }
         },
         "updater": {
             "title": "Kiểm tra cập nhật",
@@ -495,6 +522,9 @@
             "history_empty": "Chưa có từ nào.",
             "save": "Lưu vào sổ từ vựng",
             "save_no_service": "Chưa có dịch vụ sổ từ vựng nào đang bật (Dịch vụ → Sổ từ vựng)."
+        },
+        "screenshot": {
+            "adjust_hint": "Kéo để chỉnh • Enter hoặc nhấp đúp để xác nhận • Esc để hủy"
         }
     }
 }
