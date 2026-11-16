@@ -67,7 +67,7 @@ Công tắc nguồn cho từng dịch vụ: tắt thì chỉ dịch khi bạn m�
 
 - Hiện cạnh con trỏ khi bôi đen chữ, nhấp đúp một từ, hoặc bấm Ctrl+A trong ô nhập, ở bất kỳ app nào.
 - 7 nút bật/tắt được: Dịch, Dịch và thay thế (dán bản dịch đè lên đoạn đang chọn), Dịch và sao chép, Đọc to, Tra từ điển, Gõ từ, Sao chép.
-- Kéo thả đổi thứ tự nút; ngang/dọc; chỉ icon, chỉ chữ hoặc cả hai; độ lệch; danh sách app không hiện thanh; có ô **Xem trước** ngay trong cài đặt.
+- Kéo thả đổi thứ tự nút; ngang/dọc; chỉ icon, chỉ chữ hoặc cả hai; độ lệch; **bộ lọc ứng dụng** (danh sách chặn hoặc danh sách cho phép, chọn từ các app đang mở); có ô **Xem trước** ngay trong cài đặt.
 
 <br clear="right"/>
 
@@ -118,17 +118,18 @@ Dịch, OCR và giọng nói đều có sẵn các hãng AI (DeepSeek, Claude, G
 
 - Cài đặt dịch: ngôn ngữ nguồn, đích và đích dự phòng, công cụ phát hiện ngôn ngữ, tự động sao chép, dịch cộng dồn, dịch khi đang gõ; có ô **Xem trước** kết quả dịch ngay trong cài đặt.
 
-- Bật/tắt tất cả, bật/tắt thanh trợ lý, dịch và chép, dịch và thay thế, đọc to vùng chọn, OCR và chép, dịch ảnh và chép, đổi cặp ngôn ngữ đích, tra từ điển, tra từ gõ tay.
+- Bật/tắt tất cả, bật/tắt thanh trợ lý, chụp màn hình (gán được cả Print Screen), dịch và chép, dịch và thay thế, đọc to vùng chọn, OCR và chép, dịch ảnh và chép, đổi cặp ngôn ngữ đích, tra từ điển, tra từ gõ tay.
 - Nút icon gọn: bấm để gán phím, ✕ để huỷ, thùng rác để xoá; rê chuột để xem chú thích.
 
 ### Cửa sổ dịch và giao diện
 
 - Vị trí riêng cho chữ nhập và chữ chọn/ảnh chụp, ẩn vùng nhập hoặc thanh ngôn ngữ, tự chỉnh chiều cao, ghim mặc định, đóng khi mất tiêu điểm.
 - Tiếng Việt, font Inter có sẵn, màu chủ đạo chọn được, sáng/tối, cỡ chữ kéo theo từng px, nhớ kích thước cửa sổ.
+- Lịch sử dịch: chọn 16 / 32 / 64 hàng mỗi trang. Sao lưu: tệp cục bộ, WebDAV và Google Drive nằm chung một trang.
 
 ### Chụp màn hình và mạng
 
-- **Chụp màn hình có công cụ vẽ** (phím tắt riêng hoặc menu khay): chọn vùng xong hiện thanh công cụ ngay tại vùng chụp — bút, bút dạ quang, mũi tên, khung chữ nhật, elip, chữ, làm mờ (mosaic), chọn màu, cỡ nét, hoàn tác/làm lại; rồi sao chép, lưu, OCR hoặc dịch ảnh. Phím tắt: Enter xong, Esc hủy, Ctrl+Z/Ctrl+Y, Ctrl+C, Ctrl+S.
+- **Chụp màn hình có công cụ vẽ** (phím tắt riêng hoặc menu khay): chọn vùng xong hiện thanh công cụ dọc (vẽ) và ngang (thao tác) ngay cạnh vùng chụp: bút, bút dạ quang, mũi tên, khung chữ nhật, elip, chữ, làm mờ (mosaic), chọn màu, cỡ nét, hoàn tác/làm lại; rồi sao chép, lưu, OCR hoặc dịch ảnh. Chụp được cả menu đang xổ ra. Phím tắt: Enter xong, Esc hủy, Ctrl+Z/Ctrl+Y, Ctrl+C, Ctrl+S.
 - **Cài đặt chụp màn hình**: đường dẫn chữ thập, kính lúp, kích thước vùng chọn (pixel), nút chỉnh kích thước vùng chọn, phát hiện cửa sổ; kiểu chú thích mặc định (màu, độ dày nét, cỡ chữ); đầu ra ảnh (vị trí lưu, PNG/JPG, sao chép ảnh dưới dạng file, đóng sau khi sao chép/lưu).
 - **Cài đặt mạng**: kết nối trực tiếp / proxy hệ thống / proxy tùy chỉnh (HTTP hoặc SOCKS5, có xác thực), danh sách bỏ qua proxy, nút kiểm tra kết nối. Áp dụng ngay, không cần khởi động lại.
 
@@ -199,12 +200,12 @@ async function translate(text, from, to, options) {
 <details>
 <summary><b>Sao lưu lên Google Drive của bạn</b></summary>
 
-Vào **Sao lưu**, chọn **Google Drive**. App không có khóa dùng chung, bạn tạo khóa của riêng mình (làm một lần, miễn phí):
+Vào **Sao lưu**, thẻ **Google Drive**, bấm **Cấu hình**. App không có khóa dùng chung, bạn tạo khóa của riêng mình (làm một lần, miễn phí):
 
 1. Vào [Google Cloud Console](https://console.cloud.google.com/), tạo project, bật **Google Drive API**.
 2. **APIs & Services → Credentials → Create credentials → OAuth client ID**, loại **Desktop app**. Nếu được hỏi, cấu hình màn hình đồng ý (OAuth consent screen) ở chế độ Testing và thêm email của bạn vào **Test users**.
 3. Dán **Client ID** và **Client Secret** vào app, bấm **Đăng nhập Google**, đồng ý trên trình duyệt.
-4. Bấm **Sao lưu** hoặc **Khôi phục**.
+4. Bấm **Xuất ngay** để sao lưu, **Duyệt bản sao lưu** để khôi phục.
 
 Bản sao lưu (cài đặt, lịch sử, plugin) nằm trong thư mục ẩn của app trên Drive. App chỉ có quyền `drive.appdata`, không thấy file khác của bạn. Khóa đăng nhập lưu trong `config.json` trên máy bạn.
 
