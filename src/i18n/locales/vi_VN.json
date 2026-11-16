@@ -562,7 +562,10 @@
             "mode_polish": "Trau chuốt",
             "mode_summarize": "Tóm tắt",
             "mode_unsupported": "Chế độ này chỉ dùng được với dịch vụ AI (OpenAI, Claude, Gemini, DeepSeek, Ollama…). Bấm lại nút để quay về dịch.",
-            "mode_rewrite": "Viết lại, chính tả"
+            "mode_rewrite": "Viết lại, chính tả",
+            "collapse_source": "Luôn thu gọn văn bản nguồn",
+            "expand_source": "Luôn hiện đầy đủ văn bản nguồn",
+            "show_source": "Bấm để xem đầy đủ"
         },
         "recognize": {
             "recognize": "Nhận dạng",
