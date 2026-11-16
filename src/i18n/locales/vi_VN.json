@@ -216,7 +216,7 @@
                     "remove": "Bỏ khỏi danh sách",
                     "empty": "Chưa thêm ứng dụng nào.",
                     "empty_block": "Trợ lý đang hoạt động ở mọi ứng dụng. Thêm ứng dụng để chặn trợ lý ở đó.",
-                    "empty_allow": "Danh sách cho phép đang trống nên trợ lý sẽ không hiện ở đâu cả. Thêm ứng dụng để bật trợ lý ở đó.",
+                    "empty_allow": "Danh sách cho phép đang trống nên trợ lý vẫn hoạt động ở mọi ứng dụng. Thêm ứng dụng để chỉ bật trợ lý ở đó.",
                     "picker_desc": "Các ứng dụng đang mở. Bấm để thêm, hoặc chọn file .exe.",
                     "search": "Tìm ứng dụng",
                     "browse": "Chọn file .exe",
