@@ -3,6 +3,7 @@ import { LuLanguages, LuReplace, LuVolume2, LuCopy, LuClipboardCopy, LuBookOpen,
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { LuGripVertical } from 'react-icons/lu';
 import PreviewBox from '../../PreviewBox';
+import AppFilter from './AppFilter';
 import { Switch, Input, Slider, Tabs, Tab } from '@nextui-org/react';
 import { useTranslation } from 'react-i18next';
 import React from 'react';
@@ -29,7 +30,6 @@ export default function Toolbar() {
     const [doubleClick, setDoubleClick] = useConfig('selection_toolbar_double_click', true);
     const [ctrlA, setCtrlA] = useConfig('selection_toolbar_ctrl_a', true);
     const [ibeamOnly, setIbeamOnly] = useConfig('selection_toolbar_ibeam_only', true);
-    const [blacklist, setBlacklist] = useConfig('selection_toolbar_blacklist', '');
     const [actions, setActions] = useConfig('selection_toolbar_actions', DEFAULT_ACTIONS);
     const [layout, setLayout] = useConfig('selection_toolbar_layout', 'horizontal');
     const [display, setDisplay] = useConfig('selection_toolbar_display', 'icon');
@@ -279,22 +279,7 @@ export default function Toolbar() {
                 )}
             </Section>
 
-            <Section title={t('config.toolbar.apps')}>
-                <Row
-                    label={t('config.toolbar.blacklist')}
-                    desc={t('config.toolbar.blacklist_desc')}
-                >
-                    {blacklist !== null && (
-                        <Input
-                            variant='bordered'
-                            className='max-w-[45%]'
-                            placeholder='AfterFX.exe, Photoshop.exe'
-                            value={blacklist}
-                            onValueChange={setBlacklist}
-                        />
-                    )}
-                </Row>
-            </Section>
+            <AppFilter />
         </>
     );
 }

@@ -16,7 +16,9 @@
 //!   selection_toolbar_double_click  bool     default true   (double click on a word)
 //!   selection_toolbar_ctrl_a        bool     default true   (Ctrl+A inside a text field)
 //!   selection_toolbar_ibeam_only    bool     default true
+//!   selection_toolbar_filter_mode   string   default "block" ("block" | "allow")
 //!   selection_toolbar_blacklist     string   default ""     (exe names, comma separated)
+//!   selection_toolbar_whitelist     string   default ""     (exe names, comma separated)
 //!   selection_toolbar_actions       string[] default ["translate","replace","speak"]
 //!                                   (buttons shown, in order; see src/window/SelToolbar)
 
@@ -448,20 +450,29 @@ mod imp {
             .to_lowercase()
     }
 
+    /// Should the toolbar stay away from this window? Config > Selection toolbar > App filter:
+    /// "block" mode skips the apps in selection_toolbar_blacklist, "allow" mode only works in
+    /// the apps in selection_toolbar_whitelist.
     unsafe fn blacklisted(window: HWND) -> bool {
-        let list = cfg_string("selection_toolbar_blacklist");
-        if list.trim().is_empty() {
-            return false;
-        }
+        let allow_mode = cfg_string("selection_toolbar_filter_mode") == "allow";
+        let list = cfg_string(if allow_mode {
+            "selection_toolbar_whitelist"
+        } else {
+            "selection_toolbar_blacklist"
+        });
         let name = process_name(window);
-        if name.is_empty() {
-            return false;
-        }
         let bare = name.trim_end_matches(".exe");
-        list.split([',', ';', '\n'])
-            .map(|s| s.trim().to_lowercase())
-            .filter(|s| !s.is_empty())
-            .any(|s| s == name || s.trim_end_matches(".exe") == bare)
+        let listed = !name.is_empty()
+            && list
+                .split([',', ';', '\n'])
+                .map(|s| s.trim().to_lowercase())
+                .filter(|s| !s.is_empty())
+                .any(|s| s == name || s.trim_end_matches(".exe") == bare);
+        if allow_mode {
+            !listed
+        } else {
+            listed
+        }
     }
 
     fn worker(rx: Receiver<Ev>) {

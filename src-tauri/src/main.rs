@@ -27,7 +27,7 @@ use hotkey::*;
 use lang_detect::*;
 use log::info;
 use once_cell::sync::OnceCell;
-use screenshot::{list_windows, screenshot};
+use screenshot::{list_running_apps, list_windows, screenshot};
 use sel_toolbar::*;
 use server::*;
 use std::sync::Mutex;
@@ -38,7 +38,7 @@ use tauri_plugin_log::LogTarget;
 use tray::*;
 use window::config_window;
 use window::updater_window;
-use window::{get_screenshot_mode, screenshot_action};
+use window::{get_screenshot_mode, screenshot_action, take_precapture};
 
 // Global AppHandle
 pub static APP: OnceCell<tauri::AppHandle> = OnceCell::new();
@@ -142,8 +142,10 @@ fn main() {
             write_capture_cut,
             get_screenshot_mode,
             screenshot_action,
+            take_precapture,
             test_network,
             list_windows,
+            list_running_apps,
             run_binary,
             local_tts_start,
             edge_tts,

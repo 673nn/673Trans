@@ -341,7 +341,25 @@
                 "offset_y": "Vertical offset",
                 "offset_y_desc": "Move the bar up or down from the mouse pointer; positive moves down.",
                 "position": "Layout and position",
-                "drag": "Drag to reorder"
+                "drag": "Drag to reorder",
+                "filter": {
+                    "title": "App filter",
+                    "mode": "Filter mode",
+                    "block": "Block list",
+                    "allow": "Allow list",
+                    "mode_block_desc": "The selection toolbar does not work in the apps on the list.",
+                    "mode_allow_desc": "The selection toolbar only works in the apps on the list.",
+                    "list": "Apps",
+                    "add": "Add app",
+                    "remove": "Remove",
+                    "empty": "No apps added yet.",
+                    "empty_block": "The toolbar works in every app. Add apps to turn it off there.",
+                    "empty_allow": "The allow list is empty, so the toolbar shows nowhere. Add apps to turn it on there.",
+                    "picker_desc": "Apps that are open now. Click to add, or pick an .exe file.",
+                    "search": "Search apps",
+                    "browse": "Pick .exe file",
+                    "none_running": "No open apps found."
+                }
             },
             "preview": "Preview",
             "preview_show": "Click to show",

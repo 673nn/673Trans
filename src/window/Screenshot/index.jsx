@@ -125,7 +125,14 @@ export default function Screenshot() {
             const monitor = await currentMonitor();
             monitorRef.current = monitor;
             const position = monitor.position;
-            await invoke('screenshot', { x: position.x, y: position.y });
+            // usually already captured by the hotkey handler (keeps open menus in the picture)
+            let ready = false;
+            try {
+                ready = await invoke('take_precapture');
+            } catch {
+                ready = false;
+            }
+            if (!ready) await invoke('screenshot', { x: position.x, y: position.y });
             const dir = await appCacheDir();
             setImgurl(convertFileSrc(await join(dir, 'pot_screenshot.png')));
         })();
