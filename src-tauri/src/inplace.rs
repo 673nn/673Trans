@@ -46,6 +46,7 @@ mod imp {
     use tauri::Manager;
     use windows::core::VARIANT;
     use windows::Win32::Foundation::{HWND, POINT, RECT};
+    use windows::Win32::System::Threading::GetCurrentProcessId;
     use windows::Win32::Graphics::Gdi::{GetDC, GetPixel, MonitorFromPoint, ReleaseDC, MONITOR_DEFAULTTONEAREST};
     use windows::Win32::System::Com::{CoCreateInstance, CoInitializeEx, CLSCTX_INPROC_SERVER, COINIT_MULTITHREADED};
     use windows::Win32::System::Ole::{SafeArrayDestroy, SafeArrayGetElement, SafeArrayGetLBound, SafeArrayGetUBound};
@@ -56,8 +57,9 @@ mod imp {
     };
     use windows::Win32::UI::HiDpi::{GetDpiForMonitor, MDT_EFFECTIVE_DPI};
     use windows::Win32::UI::WindowsAndMessaging::{
-        GetCursorPos, GetWindowLongPtrW, SetWindowLongPtrW, SetWindowPos, ShowWindow, GWL_EXSTYLE, HWND_TOPMOST,
-        SWP_NOACTIVATE, SWP_SHOWWINDOW, SW_HIDE, WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW, WS_EX_TOPMOST,
+        GetCursorPos, GetForegroundWindow, GetWindowLongPtrW, GetWindowRect, GetWindowThreadProcessId, IsIconic,
+        SetWindowLongPtrW, SetWindowPos, ShowWindow, GWL_EXSTYLE, HWND_TOPMOST, SWP_NOACTIVATE, SWP_SHOWWINDOW,
+        SW_HIDE, SW_SHOWNOACTIVATE, WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW, WS_EX_TOPMOST,
     };
 
     static HWND_RAW: AtomicIsize = AtomicIsize::new(0);
@@ -65,6 +67,23 @@ mod imp {
     // last probe: bounding box in physical px, and what the page needs
     static LAST: Mutex<Option<(RECT, Probe)>> = Mutex::new(None);
     static SHOWN: Mutex<RECT> = Mutex::new(RECT { left: 0, top: 0, right: 0, bottom: 0 });
+    // the app window the selection is in, and where it was: the translation follows its focus
+    static SRC: AtomicIsize = AtomicIsize::new(0);
+    static SRC_RECT: Mutex<RECT> = Mutex::new(RECT { left: 0, top: 0, right: 0, bottom: 0 });
+    static PENDING: Mutex<(isize, RECT)> = Mutex::new((0, RECT { left: 0, top: 0, right: 0, bottom: 0 }));
+    // hidden because another app is in front; shown again when the source comes back
+    static SUSPENDED: AtomicBool = AtomicBool::new(false);
+    static WATCHING: AtomicBool = AtomicBool::new(false);
+
+    fn keep() -> bool {
+        crate::config::get("inplace_keep").and_then(|v| v.as_bool()).unwrap_or(true)
+    }
+
+    unsafe fn rect_of(h: HWND) -> RECT {
+        let mut r = RECT::default();
+        let _ = GetWindowRect(h, &mut r);
+        r
+    }
 
     fn hwnd(raw: isize) -> HWND {
         HWND(raw as *mut _)
@@ -245,6 +264,8 @@ mod imp {
                 bg: background(&lines),
             };
             *LAST.lock().unwrap() = Some((bbox, probe.clone()));
+            let fg = GetForegroundWindow();
+            *PENDING.lock().unwrap() = (fg.0 as isize, rect_of(fg));
             probe
         }
     }
@@ -306,7 +327,51 @@ mod imp {
             );
         }
         VISIBLE.store(true, SeqCst);
+        SUSPENDED.store(false, SeqCst);
+        let (src, src_rect) = *PENDING.lock().unwrap();
+        SRC.store(src, SeqCst);
+        *SRC_RECT.lock().unwrap() = src_rect;
+        if !WATCHING.swap(true, SeqCst) {
+            std::thread::spawn(watch);
+        }
         Ok(())
+    }
+
+    /// Follow the source window: hide while another app is in front, show again when it
+    /// comes back unchanged; gone for good when it moved, resized or was minimized.
+    fn watch() {
+        loop {
+            std::thread::sleep(std::time::Duration::from_millis(150));
+            let visible = VISIBLE.load(SeqCst);
+            let suspended = SUSPENDED.load(SeqCst);
+            if !visible && !suspended {
+                continue;
+            }
+            unsafe {
+                let src = hwnd(SRC.load(SeqCst));
+                let saved = *SRC_RECT.lock().unwrap();
+                let now = rect_of(src);
+                if IsIconic(src).as_bool() || now != saved {
+                    hide();
+                    SUSPENDED.store(false, SeqCst);
+                    continue;
+                }
+                let fg = GetForegroundWindow();
+                let mut pid = 0u32;
+                GetWindowThreadProcessId(fg, Some(&mut pid));
+                let ours = pid == GetCurrentProcessId();
+                let raw = HWND_RAW.load(SeqCst);
+                if visible && fg != src && !ours {
+                    let _ = ShowWindow(hwnd(raw), SW_HIDE);
+                    VISIBLE.store(false, SeqCst);
+                    SUSPENDED.store(true, SeqCst);
+                } else if suspended && fg == src {
+                    let _ = ShowWindow(hwnd(raw), SW_SHOWNOACTIVATE);
+                    SUSPENDED.store(false, SeqCst);
+                    VISIBLE.store(true, SeqCst);
+                }
+            }
+        }
     }
 
     /// The page measured the translation: grow the window (CSS px) to fit it.
@@ -329,6 +394,7 @@ mod imp {
     }
 
     pub fn hide() {
+        SUSPENDED.store(false, SeqCst);
         if !VISIBLE.swap(false, SeqCst) {
             return;
         }
@@ -340,11 +406,25 @@ mod imp {
         }
     }
 
-    /// A click or scroll anywhere (from the selection toolbar's mouse hook) ends it.
+    /// Scroll, right / middle click or Esc (from the selection toolbar's hooks): the text
+    /// under the translation may move, so it goes away.
     pub fn dismiss() {
-        if VISIBLE.load(SeqCst) {
+        if VISIBLE.load(SeqCst) || SUSPENDED.load(SeqCst) {
             hide();
         }
+    }
+
+    /// A left click elsewhere: keeps the translation unless "keep" is off in the settings.
+    /// (A click on the translation itself is handled by the page: it shows the original.)
+    pub fn click(x: i32, y: i32) {
+        if !VISIBLE.load(SeqCst) || keep() {
+            return;
+        }
+        let r = *SHOWN.lock().unwrap();
+        if x >= r.left && x <= r.right && y >= r.top && y <= r.bottom {
+            return;
+        }
+        hide();
     }
 }
 
@@ -361,9 +441,10 @@ mod imp {
     pub fn resize(_w: f64, _h: f64) {}
     pub fn hide() {}
     pub fn dismiss() {}
+    pub fn click(_x: i32, _y: i32) {}
 }
 
-pub use imp::{dismiss, prepare};
+pub use imp::{click, dismiss, prepare};
 
 #[tauri::command(async)]
 pub fn inplace_probe() -> Probe {

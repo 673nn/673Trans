@@ -490,7 +490,7 @@ mod imp {
         loop {
             match rx.recv_timeout(Duration::from_millis(500)) {
                 Ok(Ev::Down { x, y, ibeam, .. }) => {
-                    crate::inplace::dismiss();
+                    crate::inplace::click(x, y);
                     if VISIBLE.load(SeqCst) && in_bar(x, y) {
                         // A click on one of our buttons, the webview handles it
                         pressed_in_bar = true;
