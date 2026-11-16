@@ -24,7 +24,7 @@ const items = [
     { path: '/screenshot', icon: LuCrop },
     { path: '/network', icon: LuGlobe },
     { path: '/hotkey', icon: LuKeyboard },
-    { path: '/service', icon: LuPuzzle },
+    { path: '/service', icon: LuPuzzle, key: true },
     { path: '/history', icon: LuHistory },
     { path: '/backup', icon: LuCloud },
     { path: '/about', icon: LuInfo },
@@ -37,13 +37,13 @@ export default function SideBar() {
 
     return (
         <nav className='config-nav'>
-            {items.map(({ path, icon: Icon }) => {
+            {items.map(({ path, icon: Icon, key }) => {
                 const active = location.pathname.includes(path);
                 return (
                     <button
                         key={path}
                         type='button'
-                        className={`config-nav-item ${active ? 'is-active' : ''}`}
+                        className={`config-nav-item ${active ? 'is-active' : ''} ${key ? 'is-key' : ''}`}
                         onClick={() => navigate(path)}
                     >
                         <Icon className='config-nav-icon' />

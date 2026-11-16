@@ -370,7 +370,50 @@ fn screenshot_window() -> Window {
     window
 }
 
+// What the screenshot window was opened for: "capture" (plain screenshot with the editor),
+// "recognize", "translate", "ocr_copy", "ocr_translate_copy".
+static SHOT_MODE: once_cell::sync::Lazy<std::sync::Mutex<String>> =
+    once_cell::sync::Lazy::new(|| std::sync::Mutex::new(String::from("recognize")));
+
+fn set_shot_mode(mode: &str) {
+    *SHOT_MODE.lock().unwrap() = mode.to_string();
+}
+
+#[tauri::command]
+pub fn get_screenshot_mode() -> String {
+    SHOT_MODE.lock().unwrap().clone()
+}
+
+/// Plain screenshot: select a region, then annotate / copy / save / OCR / translate it
+/// in the screenshot window itself.
+pub fn screen_capture() {
+    #[cfg(not(target_os = "macos"))]
+    {
+        set_shot_mode("capture");
+        let _ = screenshot_window();
+    }
+    #[cfg(target_os = "macos")]
+    {
+        let _ = std::process::Command::new("/usr/sbin/screencapture")
+            .arg("-i")
+            .arg("-c")
+            .spawn();
+    }
+}
+
+/// Called by the screenshot editor after it wrote pot_screenshot_cut.png.
+#[tauri::command(async)]
+pub fn screenshot_action(action: String) {
+    match action.as_str() {
+        "recognize" => recognize_window(),
+        "translate" => image_translate(),
+        "ocr_copy" | "ocr_translate_copy" => crate::sel_toolbar::hotkey_action(action),
+        _ => {}
+    }
+}
+
 pub fn ocr_recognize() {
+    set_shot_mode("recognize");
     #[cfg(target_os = "macos")]
     {
         let app_handle = APP.get().unwrap();
@@ -404,6 +447,7 @@ pub fn ocr_recognize() {
     }
 }
 pub fn ocr_translate() {
+    set_shot_mode("translate");
     #[cfg(target_os = "macos")]
     {
         let app_handle = APP.get().unwrap();
@@ -441,6 +485,7 @@ pub fn ocr_translate() {
 /// Screenshot, then hand the image to the hidden toolbar webview, which runs OCR
 /// (and translation) and puts the result on the clipboard, without any window.
 pub fn ocr_to_clipboard(action: &'static str) {
+    set_shot_mode(action);
     #[cfg(not(target_os = "macos"))]
     {
         let window = screenshot_window();

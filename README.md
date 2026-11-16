@@ -14,10 +14,10 @@
 <p align="center">
   <a href="https://github.com/nguyenguyen673/673Trans/releases/latest"><img src="https://img.shields.io/badge/%E2%AC%87%20T%E1%BA%A3i%20673Trans%20(.exe)-Releases-bff03a?style=for-the-badge&labelColor=0b2a12" alt="Tải 673Trans"/></a>
 </p>
-<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.6/673Trans-3.27.6.exe">Windows: 673Trans-3.27.6.exe</a></p>
-<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.6/673Trans-3.27.6-mac-aarch64.dmg">macOS Apple Silicon (M1/M2/M3…): .dmg</a> &middot; <a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.6/673Trans-3.27.6-mac-x64.dmg">macOS Intel: .dmg</a></p>
+<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.7/673Trans-3.27.7.exe">Windows: 673Trans-3.27.7.exe</a></p>
+<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.7/673Trans-3.27.7-mac-aarch64.dmg">macOS Apple Silicon (M1/M2/M3…): .dmg</a> &middot; <a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.7/673Trans-3.27.7-mac-x64.dmg">macOS Intel: .dmg</a></p>
 <p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases">Tất cả bản phát hành</a></p>
-<p align="center">Windows 10/11: chỉ cần 1 file <code>.exe</code>, không cần cài thêm gì &middot; macOS: bản thử nghiệm, xem hướng dẫn mở app ở mục bên dưới &middot; Phiên bản hiện tại: 3.27.6</p>
+<p align="center">Windows 10/11: chỉ cần 1 file <code>.exe</code>, không cần cài thêm gì &middot; macOS: bản thử nghiệm, xem hướng dẫn mở app ở mục bên dưới &middot; Phiên bản hiện tại: 3.27.7</p>
 
 <hr/>
 
@@ -128,7 +128,8 @@ Dịch, OCR và giọng nói đều có sẵn các hãng AI (DeepSeek, Claude, G
 
 ### Chụp màn hình và mạng
 
-- **Cài đặt chụp màn hình**: đường dẫn chữ thập, kính lúp, hiện kích thước vùng chọn (pixel), nút chỉnh kích thước vùng chọn (kéo 8 nút / di chuyển, Enter hoặc nhấp đúp để xác nhận, Esc để hủy), phát hiện cửa sổ (rê chuột tô sáng, nhấp để chụp cả cửa sổ).
+- **Chụp màn hình có công cụ vẽ** (phím tắt riêng hoặc menu khay): chọn vùng xong hiện thanh công cụ ngay tại vùng chụp — bút, bút dạ quang, mũi tên, khung chữ nhật, elip, chữ, làm mờ (mosaic), chọn màu, cỡ nét, hoàn tác/làm lại; rồi sao chép, lưu, OCR hoặc dịch ảnh. Phím tắt: Enter xong, Esc hủy, Ctrl+Z/Ctrl+Y, Ctrl+C, Ctrl+S.
+- **Cài đặt chụp màn hình**: đường dẫn chữ thập, kính lúp, kích thước vùng chọn (pixel), nút chỉnh kích thước vùng chọn, phát hiện cửa sổ; kiểu chú thích mặc định (màu, độ dày nét, cỡ chữ); đầu ra ảnh (vị trí lưu, PNG/JPG, sao chép ảnh dưới dạng file, đóng sau khi sao chép/lưu).
 - **Cài đặt mạng**: kết nối trực tiếp / proxy hệ thống / proxy tùy chỉnh (HTTP hoặc SOCKS5, có xác thực), danh sách bỏ qua proxy, nút kiểm tra kết nối. Áp dụng ngay, không cần khởi động lại.
 
 ### Tự cập nhật
