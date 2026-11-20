@@ -565,7 +565,8 @@
             "mode_rewrite": "Viết lại, chính tả",
             "collapse_source": "Luôn thu gọn văn bản nguồn",
             "expand_source": "Luôn hiện đầy đủ văn bản nguồn",
-            "show_source": "Bấm để xem đầy đủ"
+            "show_source": "Bấm để xem đầy đủ",
+            "mode_meaning": "Giải nghĩa"
         },
         "recognize": {
             "recognize": "Nhận dạng",
