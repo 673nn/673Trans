@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { BiTransferAlt } from 'react-icons/bi';
 import React, { useEffect } from 'react';
 import { atom, useAtom, useAtomValue } from 'jotai';
-import { LuSparkles, LuListChecks, LuBookOpen, LuSpellCheck } from 'react-icons/lu';
+import { LuSparkles, LuListChecks, LuBookOpen, LuSpellCheck, LuMessageCircle } from 'react-icons/lu';
 
 import { translateModeAtom } from '../../../../utils/translate_mode';
 import { languageList } from '../../../../utils/language';
@@ -130,6 +130,7 @@ export default function LanguageArea() {
             </Card>
             <div className='mode-row'>
                 {[
+                    ['chat', <LuMessageCircle />],
                     ['polish', <LuSparkles />],
                     ['rewrite', <LuSpellCheck />],
                     ['summarize', <LuListChecks />],

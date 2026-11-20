@@ -566,7 +566,8 @@
             "collapse_source": "Luôn thu gọn văn bản nguồn",
             "expand_source": "Luôn hiện đầy đủ văn bản nguồn",
             "show_source": "Bấm để xem đầy đủ",
-            "mode_meaning": "Giải nghĩa"
+            "mode_meaning": "Giải nghĩa",
+            "mode_chat": "English Chat"
         },
         "recognize": {
             "recognize": "Nhận dạng",
