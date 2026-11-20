@@ -777,7 +777,8 @@
             "mode_rewrite": "Rewrite & spelling",
             "collapse_source": "Always collapse the source text",
             "expand_source": "Always show the full source text",
-            "show_source": "Click to read it all"
+            "show_source": "Click to read it all",
+            "mode_meaning": "Explain"
         },
         "recognize": {
             "recognize": "Recognize",
