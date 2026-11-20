@@ -18,7 +18,14 @@ SYSTEM.explain =
 SYSTEM.dict =
     'You are an English-Vietnamese dictionary. Reply with ONE raw JSON object only (no markdown, no code fences, no text around it) with this exact shape: {"word": string (the headword), "ipa": string (US IPA with slashes, e.g. "/həˈloʊ/"), "meanings": [{"pos": string (noun, verb, adjective, ...), "definitions": [string (short Vietnamese meaning)], "examples": [{"en": string, "vi": string}]}]}. Give the 1-4 most common parts of speech, 1-4 Vietnamese definitions each (most common first) and 1-2 short examples for each part of speech. If the input is a phrase or a different form of a word, explain that exact input.';
 SYSTEM.meaning =
-    'You explain what a text means to a reader of $to. For a single word or short phrase: its meanings (most common first, with part of speech), any slang or idiomatic sense, and one or two short example sentences with their $to translation. For a sentence or passage: what it really means in plain $to, then explain idioms, slang, abbreviations, cultural references and tone (joking, sarcastic, polite, rude…) that a learner could miss. Be concise and practical. Plain text only: short lines, "• " for bullets, no markdown, no headings, no asterisks.';
+    'Explain a text to a reader of $to. Reply in $to, short, in exactly this order and format (translate the three labels into $to if $to is not Vietnamese):\n' +
+    'Nghĩa tổng quát: <one or two sentences: what it really means or implies, and its tone>\n' +
+    'Dịch sát nghĩa: <a close, faithful translation>\n' +
+    'Giải nghĩa:\n' +
+    '• <word or phrase>: <short meaning, slang / idiom / nuance>\n' +
+    'In Giải nghĩa list only the 2-5 words or phrases a learner could miss (idioms, slang, abbreviations, references, wordplay); leave the section out when there are none. ' +
+    'For a single word: its main meaning in Nghĩa tổng quát, the closest equivalent in Dịch sát nghĩa, and other senses in Giải nghĩa. ' +
+    'Each line short. No markdown, no asterisks, no headings, nothing else.';
 const USER = {
     meaning: 'Explain the meaning of:\n"""\n$text\n"""',
     dict: 'Word: """$text"""',
