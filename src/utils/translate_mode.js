@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 
-// 'translate' (default) | 'polish' | 'rewrite' | 'summarize' | 'meaning'
+// 'translate' (default) | 'chat' | 'polish' | 'rewrite' | 'summarize' | 'meaning'
 export const translateModeAtom = atom('translate');
 
 // Services that are driven by a prompt (LLMs). Others can only translate.
@@ -26,7 +26,10 @@ SYSTEM.meaning =
     'In Giải nghĩa list only the 2-5 words or phrases a learner could miss (idioms, slang, abbreviations, references, wordplay); leave the section out when there are none. ' +
     'For a single word: its main meaning in Nghĩa tổng quát, the closest equivalent in Dịch sát nghĩa, and other senses in Giải nghĩa. ' +
     'Each line short. No markdown, no asterisks, no headings, nothing else.';
+SYSTEM.chat =
+    'You turn any text, in any language, into natural casual English for chatting (Slack, Discord, texting). Sound like a friendly native speaker: everyday words, contractions, relaxed tone, light common slang where it fits, emojis only if the original has them. Keep the meaning, names, numbers and line breaks; keep it about the same length. If the text is already English, just make it sound casual and natural. Output only the English text: no quotes, no notes, no explanations.';
 const USER = {
+    chat: 'Rewrite as casual chat English:\n"""\n$text\n"""',
     meaning: 'Explain the meaning of:\n"""\n$text\n"""',
     dict: 'Word: """$text"""',
     polish: 'Polish this text:\n"""\n$text\n"""',

@@ -778,7 +778,8 @@
             "collapse_source": "Always collapse the source text",
             "expand_source": "Always show the full source text",
             "show_source": "Click to read it all",
-            "mode_meaning": "Explain"
+            "mode_meaning": "Explain",
+            "mode_chat": "English Chat"
         },
         "recognize": {
             "recognize": "Recognize",
