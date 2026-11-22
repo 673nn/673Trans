@@ -38,15 +38,42 @@ const USER = {
     summarize: 'Summarize into $to:\n"""\n$text\n"""',
 };
 
+// ---- AI buttons of the translate window (Config > AI buttons) ---------------------------------
+// Stored as a list under MODES_KEY. Built-in buttons keep `builtin` (their id) so the name can
+// follow the app language until the user renames them, and so they can be reset.
+export const MODES_KEY = 'translate_ai_modes';
+const BUILTIN = [
+    ['chat', 'message'],
+    ['polish', 'sparkles'],
+    ['rewrite', 'spellcheck'],
+    ['summarize', 'list'],
+    ['meaning', 'book'],
+];
+
+export function builtinMode(id) {
+    const icon = (BUILTIN.find((b) => b[0] === id) ?? [id, 'sparkles'])[1];
+    return { id, builtin: id, name: '', icon, system: SYSTEM[id] ?? '', user: USER[id] ?? '$text', enabled: true };
+}
+
+export function defaultModes() {
+    return BUILTIN.map(([id]) => builtinMode(id));
+}
+
+export function newModeId() {
+    return `custom_${Date.now().toString(36)}`;
+}
+
 export function modeSupported(serviceName, mode) {
     return mode === 'translate' || LLM_SERVICES.includes(serviceName);
 }
 
-// Returns the service config with the prompts replaced for the polish / summarize modes
-export function applyMode(serviceName, config, mode) {
+// Returns the service config with the prompts of `mode` (an AI button, or 'dict' / 'explain'
+// for the dictionary). `modes`: the user's AI buttons; built-in prompts are the fallback.
+export function applyMode(serviceName, config, mode, modes = null) {
     if (mode === 'translate' || !LLM_SERVICES.includes(serviceName)) return config;
-    const system = SYSTEM[mode];
-    const user = USER[mode];
+    const custom = Array.isArray(modes) ? modes.find((m) => m.id === mode) : null;
+    const system = custom?.system ?? SYSTEM[mode] ?? '';
+    const user = custom?.user?.trim() ? custom.user : USER[mode] ?? '$text';
     const promptList =
         serviceName === 'geminipro'
             ? [{ role: 'user', parts: [{ text: `${system}\n\n${user}` }] }]

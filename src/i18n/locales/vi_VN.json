@@ -423,6 +423,31 @@
                 "copy_file": "Sao chép ảnh dưới dạng file",
                 "copy_file_desc": "Dán được vào thư mục, Zalo, Slack… như một file đính kèm.",
                 "close_after": "Đóng sau khi sao chép hoặc lưu ảnh"
+            },
+            "aimodes": {
+                "label": "Nút AI",
+                "title": "Nút AI trong cửa sổ dịch",
+                "desc": "Các nút như English Chat, Trau chuốt… nằm dưới ô ngôn ngữ trong cửa sổ dịch. Bấm một nút thì các dịch vụ AI (DeepSeek, Gemini, OpenAI…) làm theo câu lệnh của nút đó thay vì dịch. Bật/tắt để hiện hoặc ẩn, mũi tên để đổi thứ tự, bút chì để sửa câu lệnh.",
+                "list": "Danh sách nút",
+                "builtin": "Mặc định",
+                "builtin_changed": "Mặc định · đã sửa",
+                "up": "Lên",
+                "down": "Xuống",
+                "edit": "Sửa",
+                "reset": "Khôi phục câu lệnh gốc",
+                "delete": "Xoá nút",
+                "show": "Hiện trong cửa sổ dịch",
+                "add": "Thêm nút",
+                "restore": "Khôi phục các nút mặc định",
+                "untitled": "Nút không tên",
+                "edit_title": "Sửa nút: {{name}}",
+                "name": "Tên nút",
+                "name_placeholder": "vd: Email lịch sự",
+                "icon": "Biểu tượng",
+                "system": "Câu lệnh hệ thống (vai trò, cách làm, định dạng kết quả)",
+                "system_placeholder": "vd: You rewrite the text as a polite, professional email in $to. Output only the email.",
+                "user": "Câu lệnh gửi kèm văn bản",
+                "vars": "Biến dùng được: $text = văn bản nguồn, $to = ngôn ngữ đích, $from = ngôn ngữ nguồn. Câu lệnh hệ thống nên ghi rõ \"chỉ trả về kết quả, không giải thích\" để kết quả gọn."
             }
         },
         "updater": {
@@ -567,7 +592,8 @@
             "expand_source": "Luôn hiện đầy đủ văn bản nguồn",
             "show_source": "Bấm để xem đầy đủ",
             "mode_meaning": "Giải nghĩa",
-            "mode_chat": "English Chat"
+            "mode_chat": "English Chat",
+            "mode_manage": "Thêm / sửa nút AI"
         },
         "recognize": {
             "recognize": "Nhận dạng",

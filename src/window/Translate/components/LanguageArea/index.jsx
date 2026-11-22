@@ -3,9 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { BiTransferAlt } from 'react-icons/bi';
 import React, { useEffect } from 'react';
 import { atom, useAtom, useAtomValue } from 'jotai';
-import { LuSparkles, LuListChecks, LuBookOpen, LuSpellCheck, LuMessageCircle } from 'react-icons/lu';
+import { LuPlus } from 'react-icons/lu';
+import { invoke } from '@tauri-apps/api';
 
-import { translateModeAtom } from '../../../../utils/translate_mode';
+import { translateModeAtom, MODES_KEY, defaultModes } from '../../../../utils/translate_mode';
+import { ModeIcon } from '../../../../utils/mode_icons';
 import { languageList } from '../../../../utils/language';
 import { detectLanguageAtom } from '../SourceArea';
 import { useConfig } from '../../../../hooks';
@@ -24,6 +26,13 @@ export default function LanguageArea() {
     const detectLanguage = useAtomValue(detectLanguageAtom);
     const { t } = useTranslation();
     const [mode, setMode] = useAtom(translateModeAtom);
+    const [modes] = useConfig(MODES_KEY, defaultModes());
+    const shown = (modes ?? []).filter((m) => m.enabled !== false);
+
+    // a button that was removed or hidden can't stay selected
+    useEffect(() => {
+        if (modes && mode !== 'translate' && !shown.some((m) => m.id === mode)) setMode('translate');
+    }, [modes]);
 
     useEffect(() => {
         if (translateSourceLanguage) {
@@ -129,25 +138,29 @@ export default function LanguageArea() {
                 </CardFooter>
             </Card>
             <div className='mode-row'>
-                {[
-                    ['chat', <LuMessageCircle />],
-                    ['polish', <LuSparkles />],
-                    ['rewrite', <LuSpellCheck />],
-                    ['summarize', <LuListChecks />],
-                    ['meaning', <LuBookOpen />],
-                ].map(([m, icon]) => (
+                {shown.map((m) => (
                     <Button
-                        key={m}
+                        key={m.id}
                         size='sm'
                         radius='full'
-                        variant={mode === m ? 'solid' : 'flat'}
-                        color={mode === m ? 'primary' : 'default'}
-                        startContent={icon}
-                        onPress={() => setMode(mode === m ? 'translate' : m)}
+                        variant={mode === m.id ? 'solid' : 'flat'}
+                        color={mode === m.id ? 'primary' : 'default'}
+                        startContent={<ModeIcon name={m.icon} />}
+                        onPress={() => setMode(mode === m.id ? 'translate' : m.id)}
                     >
-                        {t(`translate.mode_${m}`)}
+                        {m.name || t(`translate.mode_${m.builtin}`)}
                     </Button>
                 ))}
+                <Button
+                    size='sm'
+                    radius='full'
+                    variant='light'
+                    isIconOnly
+                    title={t('translate.mode_manage')}
+                    onPress={() => invoke('open_config_page', { path: '/aimodes' })}
+                >
+                    <LuPlus />
+                </Button>
             </div>
         </>
     );

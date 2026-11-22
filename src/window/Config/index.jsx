@@ -1,4 +1,6 @@
-import { useLocation, useRoutes } from 'react-router-dom';
+import { useLocation, useNavigate, useRoutes } from 'react-router-dom';
+import { listen } from '@tauri-apps/api/event';
+import { invoke } from '@tauri-apps/api';
 import React, { useEffect } from 'react';
 import { appWindow } from '@tauri-apps/api/window';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +18,21 @@ export default function Config() {
     const { t } = useTranslation();
     const location = useLocation();
     const page = useRoutes(routes);
+    const navigate = useNavigate();
+
+    // other windows can open a given page (translate window → AI buttons)
+    useEffect(() => {
+        invoke('take_config_path')
+            .then((p) => p && navigate(p))
+            .catch(() => {});
+        const un = listen('config_navigate', ({ payload }) => {
+            if (payload) navigate(payload);
+            invoke('take_config_path').catch(() => {});
+        });
+        return () => {
+            un.then((f) => f());
+        };
+    }, []);
 
     useEffect(() => {
         if (appWindow.label === 'config') {

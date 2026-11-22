@@ -8,6 +8,7 @@ import Service from '../pages/Service';
 import History from '../pages/History';
 import Hotkey from '../pages/Hotkey';
 import Network from '../pages/Network';
+import AiModes from '../pages/AiModes';
 import Screenshot from '../pages/Screenshot';
 import Backup from '../pages/Backup';
 import About from '../pages/About';
@@ -28,6 +29,10 @@ const routes = [
     {
         path: '/recognize',
         element: <Recognize />,
+    },
+    {
+        path: '/aimodes',
+        element: <AiModes />,
     },
     {
         path: '/screenshot',

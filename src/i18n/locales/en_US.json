@@ -423,6 +423,31 @@
                 "copy_file": "Copy image as a file",
                 "copy_file_desc": "Paste it into folders or chat apps as an attachment.",
                 "close_after": "Close after copying or saving"
+            },
+            "aimodes": {
+                "label": "AI buttons",
+                "title": "AI buttons in the translate window",
+                "desc": "Buttons like English Chat or Polish sit under the language bar of the translate window. With one selected, AI services (DeepSeek, Gemini, OpenAI…) follow its prompt instead of translating. Toggle to show or hide, arrows to reorder, pencil to edit the prompt.",
+                "list": "Buttons",
+                "builtin": "Built-in",
+                "builtin_changed": "Built-in · edited",
+                "up": "Up",
+                "down": "Down",
+                "edit": "Edit",
+                "reset": "Restore the original prompt",
+                "delete": "Delete",
+                "show": "Show in the translate window",
+                "add": "Add button",
+                "restore": "Restore built-in buttons",
+                "untitled": "Untitled",
+                "edit_title": "Edit: {{name}}",
+                "name": "Name",
+                "name_placeholder": "e.g. Polite email",
+                "icon": "Icon",
+                "system": "System prompt (role, what to do, output format)",
+                "system_placeholder": "e.g. You rewrite the text as a polite, professional email in $to. Output only the email.",
+                "user": "Prompt sent with the text",
+                "vars": "Variables: $text = source text, $to = target language, $from = source language. Tell it to \"output only the result, no explanations\" to keep results clean."
             }
         },
         "updater": {
@@ -779,7 +804,8 @@
             "expand_source": "Always show the full source text",
             "show_source": "Click to read it all",
             "mode_meaning": "Explain",
-            "mode_chat": "English Chat"
+            "mode_chat": "English Chat",
+            "mode_manage": "Add / edit AI buttons"
         },
         "recognize": {
             "recognize": "Recognize",
