@@ -447,7 +447,19 @@
                 "system": "Câu lệnh hệ thống (vai trò, cách làm, định dạng kết quả)",
                 "system_placeholder": "vd: You rewrite the text as a polite, professional email in $to. Output only the email.",
                 "user": "Câu lệnh gửi kèm văn bản",
-                "vars": "Biến dùng được: $text = văn bản nguồn, $to = ngôn ngữ đích, $from = ngôn ngữ nguồn. Câu lệnh hệ thống nên ghi rõ \"chỉ trả về kết quả, không giải thích\" để kết quả gọn."
+                "vars": "Biến dùng được: $text = văn bản nguồn, $to = ngôn ngữ đích, $from = ngôn ngữ nguồn. Câu lệnh hệ thống nên ghi rõ \"chỉ trả về kết quả, không giải thích\" để kết quả gọn.",
+                "on_toolbar": "Trên thanh trợ lý",
+                "hotkey": "Phím tắt",
+                "hotkey_desc": "Tô chữ ở bất kỳ đâu rồi bấm phím này.",
+                "toolbar": "Hiện trên thanh trợ lý chọn văn bản",
+                "toolbar_desc": "Thêm nút này vào thanh icon nổi khi tô chữ.",
+                "action": "Khi bấm phím tắt / nút trên thanh trợ lý",
+                "action_replace": "Dán đè",
+                "action_popup": "Mở cửa sổ dịch",
+                "action_replace_desc": "Chạy ngay và dán kết quả đè lên chữ đã tô (chữ chỉ đọc thì phủ bản dịch lên).",
+                "action_popup_desc": "Mở cửa sổ dịch với nút này đang bật, xem kết quả rồi chép.",
+                "list_result": "Kết quả là danh sách lựa chọn",
+                "list_result_desc": "Mỗi dòng kết quả thành một ô, bấm là chép (như Trả lời nhanh)."
             }
         },
         "updater": {
@@ -593,7 +605,10 @@
             "show_source": "Bấm để xem đầy đủ",
             "mode_meaning": "Giải nghĩa",
             "mode_chat": "English Chat",
-            "mode_manage": "Thêm / sửa nút AI"
+            "mode_manage": "Thêm / sửa nút AI",
+            "mode_reply": "Trả lời nhanh",
+            "click_to_copy": "Bấm để chép",
+            "copied": "Đã chép"
         },
         "recognize": {
             "recognize": "Nhận dạng",

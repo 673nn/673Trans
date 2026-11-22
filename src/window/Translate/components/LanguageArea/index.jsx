@@ -6,7 +6,8 @@ import { atom, useAtom, useAtomValue } from 'jotai';
 import { LuPlus } from 'react-icons/lu';
 import { invoke } from '@tauri-apps/api';
 
-import { translateModeAtom, MODES_KEY, defaultModes } from '../../../../utils/translate_mode';
+import { translateModeAtom, MODES_KEY, defaultModes, normalizeModes } from '../../../../utils/translate_mode';
+import { listen } from '@tauri-apps/api/event';
 import { ModeIcon } from '../../../../utils/mode_icons';
 import { languageList } from '../../../../utils/language';
 import { detectLanguageAtom } from '../SourceArea';
@@ -26,13 +27,27 @@ export default function LanguageArea() {
     const detectLanguage = useAtomValue(detectLanguageAtom);
     const { t } = useTranslation();
     const [mode, setMode] = useAtom(translateModeAtom);
-    const [modes] = useConfig(MODES_KEY, defaultModes());
+    const [savedModes] = useConfig(MODES_KEY, defaultModes());
+    const modes = savedModes ? normalizeModes(savedModes) : null;
     const shown = (modes ?? []).filter((m) => m.enabled !== false);
+
+    // opened by an AI button's hotkey / the selection toolbar: turn that button on
+    useEffect(() => {
+        const pick = () =>
+            invoke('take_translate_mode')
+                .then((id) => id && setMode(id))
+                .catch(() => {});
+        pick();
+        const un = listen('new_text', pick);
+        return () => {
+            un.then((f) => f());
+        };
+    }, []);
 
     // a button that was removed or hidden can't stay selected
     useEffect(() => {
-        if (modes && mode !== 'translate' && !shown.some((m) => m.id === mode)) setMode('translate');
-    }, [modes]);
+        if (modes && mode !== 'translate' && !modes.some((m) => m.id === mode)) setMode('translate');
+    }, [savedModes]);
 
     useEffect(() => {
         if (translateSourceLanguage) {

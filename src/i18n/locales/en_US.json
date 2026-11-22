@@ -447,7 +447,19 @@
                 "system": "System prompt (role, what to do, output format)",
                 "system_placeholder": "e.g. You rewrite the text as a polite, professional email in $to. Output only the email.",
                 "user": "Prompt sent with the text",
-                "vars": "Variables: $text = source text, $to = target language, $from = source language. Tell it to \"output only the result, no explanations\" to keep results clean."
+                "vars": "Variables: $text = source text, $to = target language, $from = source language. Tell it to \"output only the result, no explanations\" to keep results clean.",
+                "on_toolbar": "On the selection toolbar",
+                "hotkey": "Hotkey",
+                "hotkey_desc": "Select text anywhere, then press it.",
+                "toolbar": "Show on the selection toolbar",
+                "toolbar_desc": "Adds this button to the floating bar that shows when you select text.",
+                "action": "Hotkey / toolbar button does",
+                "action_replace": "Replace",
+                "action_popup": "Open window",
+                "action_replace_desc": "Runs right away and pastes the result over the selection (read-only text gets it drawn over).",
+                "action_popup_desc": "Opens the translate window with this button on, to read and copy.",
+                "list_result": "Result is a list of choices",
+                "list_result_desc": "Each result line becomes a box; click to copy (like Quick reply)."
             }
         },
         "updater": {
@@ -805,7 +817,10 @@
             "show_source": "Click to read it all",
             "mode_meaning": "Explain",
             "mode_chat": "English Chat",
-            "mode_manage": "Add / edit AI buttons"
+            "mode_manage": "Add / edit AI buttons",
+            "mode_reply": "Quick reply",
+            "click_to_copy": "Click to copy",
+            "copied": "Copied"
         },
         "recognize": {
             "recognize": "Recognize",

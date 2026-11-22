@@ -1,6 +1,6 @@
 use crate::config::{get, set};
 use crate::sel_toolbar::hotkey_action;
-use crate::window::{dict_input, input_translate, ocr_recognize, ocr_to_clipboard, ocr_translate, screen_capture, selection_dictionary, selection_translate};
+use crate::window::{selection_translate_mode, dict_input, input_translate, ocr_recognize, ocr_to_clipboard, ocr_translate, screen_capture, selection_dictionary, selection_translate};
 use crate::APP;
 use log::{info, warn};
 use std::sync::atomic::{AtomicBool, Ordering::SeqCst};
@@ -138,6 +138,66 @@ fn unregister_all_pairs(app_handle: &AppHandle) {
     }
 }
 
+/// AI buttons (Config > AI buttons) can have their own hotkey: `translate_ai_modes[].hotkey`.
+/// "replace": run it on the selection and paste over it (selection toolbar webview);
+/// "popup": open the translate window with that button on.
+fn ai_handler(id: String) -> Handler {
+    Box::new(move || {
+        let action = get("translate_ai_modes")
+            .and_then(|v| v.as_array().cloned())
+            .and_then(|list| list.into_iter().find(|m| m["id"].as_str() == Some(id.as_str())))
+            .and_then(|m| m["action"].as_str().map(|s| s.to_string()))
+            .unwrap_or_else(|| {
+                if matches!(id.as_str(), "chat" | "polish" | "rewrite") {
+                    "replace".into()
+                } else {
+                    "popup".into()
+                }
+            });
+        if action == "replace" {
+            hotkey_action(format!("ai:{}", id));
+        } else {
+            selection_translate_mode(id.clone());
+        }
+    })
+}
+
+fn ai_hotkeys() -> Vec<(String, String)> {
+    get("translate_ai_modes")
+        .and_then(|v| v.as_array().cloned())
+        .unwrap_or_default()
+        .into_iter()
+        .filter_map(|m| {
+            let key = m["hotkey"].as_str().unwrap_or("").to_string();
+            let id = m["id"].as_str().unwrap_or("").to_string();
+            (!key.is_empty() && !id.is_empty()).then_some((key, id))
+        })
+        .collect()
+}
+
+fn register_all_ai(app_handle: &AppHandle) {
+    for (key, id) in ai_hotkeys() {
+        if let Err(e) = app_handle.global_shortcut_manager().register(&key, ai_handler(id.clone())) {
+            warn!("Failed to register AI button hotkey {} for {}: {:?}", key, id, e);
+        }
+    }
+}
+
+fn unregister_all_ai(app_handle: &AppHandle) {
+    for (key, _) in ai_hotkeys() {
+        let _ = app_handle.global_shortcut_manager().unregister(&key);
+    }
+}
+
+#[tauri::command]
+pub fn register_ai_hotkey(shortcut: &str, id: String) -> Result<(), String> {
+    let app_handle = APP.get().unwrap();
+    app_handle
+        .global_shortcut_manager()
+        .register(shortcut, ai_handler(id))
+        .map_err(|e| e.to_string())
+}
+
 /// "Enable / disable all hotkeys": this hotkey itself always stays registered.
 fn toggle_all() {
     let Some(app_handle) = APP.get() else { return };
@@ -151,6 +211,7 @@ fn toggle_all() {
             }
         }
         unregister_all_pairs(app_handle);
+        unregister_all_ai(app_handle);
         notify("Đã tắt tất cả phím tắt (bấm lại phím này để bật)");
     } else {
         for name in ACTIONS {
@@ -159,6 +220,7 @@ fn toggle_all() {
             }
         }
         register_all_pairs(app_handle);
+        register_all_ai(app_handle);
         notify("Đã bật lại tất cả phím tắt");
     }
 }
@@ -179,6 +241,7 @@ pub fn register_shortcut(shortcut: &str) -> Result<(), String> {
                 }
             }
             register_all_pairs(app_handle);
+            register_all_ai(app_handle);
             if !failed.is_empty() {
                 return Err(failed.join(", "));
             }

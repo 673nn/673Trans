@@ -28,7 +28,10 @@ SYSTEM.meaning =
     'Each line short. No markdown, no asterisks, no headings, nothing else.';
 SYSTEM.chat =
     'You turn any text, in any language, into natural casual English for chatting (Slack, Discord, texting). Sound like a friendly native speaker: everyday words, contractions, relaxed tone, light common slang where it fits, emojis only if the original has them. Keep the meaning, names, numbers and line breaks; keep it about the same length. If the text is already English, just make it sound casual and natural. Output only the English text: no quotes, no notes, no explanations.';
+SYSTEM.reply =
+    'You suggest replies to a chat message (Slack, Discord, texting). Write 3 different short replies in natural, casual English, like a friendly native speaker at work: one that agrees or answers positively, one that asks a follow-up or clarifies, one that politely declines or pushes back. Match the tone of the message; keep each reply to one or two sentences. Output exactly 3 lines, one reply per line, nothing else: no numbers, no labels, no quotes.';
 const USER = {
+    reply: 'Message:\n"""\n$text\n"""',
     chat: 'Rewrite as casual chat English:\n"""\n$text\n"""',
     meaning: 'Explain the meaning of:\n"""\n$text\n"""',
     dict: 'Word: """$text"""',
@@ -42,17 +45,50 @@ const USER = {
 // Stored as a list under MODES_KEY. Built-in buttons keep `builtin` (their id) so the name can
 // follow the app language until the user renames them, and so they can be reset.
 export const MODES_KEY = 'translate_ai_modes';
+// [id, icon, hotkey/toolbar action, results are a list of choices]
 const BUILTIN = [
-    ['chat', 'message'],
-    ['polish', 'sparkles'],
-    ['rewrite', 'spellcheck'],
-    ['summarize', 'list'],
-    ['meaning', 'book'],
+    ['chat', 'message', 'replace'],
+    ['reply', 'zap', 'popup', true],
+    ['polish', 'sparkles', 'replace'],
+    ['rewrite', 'spellcheck', 'replace'],
+    ['summarize', 'list', 'popup'],
+    ['meaning', 'book', 'popup'],
 ];
 
+// A button: name / icon / prompts; enabled (shown in the translate window), toolbar (shown on
+// the selection toolbar), hotkey (global shortcut), action ('replace': paste over the selection,
+// 'popup': open the translate window with this button on), list (each result line is a choice).
 export function builtinMode(id) {
-    const icon = (BUILTIN.find((b) => b[0] === id) ?? [id, 'sparkles'])[1];
-    return { id, builtin: id, name: '', icon, system: SYSTEM[id] ?? '', user: USER[id] ?? '$text', enabled: true };
+    const [, icon, action, list] = BUILTIN.find((b) => b[0] === id) ?? [id, 'sparkles', 'popup', false];
+    return {
+        id,
+        builtin: id,
+        name: '',
+        icon,
+        system: SYSTEM[id] ?? '',
+        user: USER[id] ?? '$text',
+        enabled: true,
+        toolbar: false,
+        hotkey: '',
+        action,
+        list: !!list,
+    };
+}
+
+// Fill fields added in later versions; add built-in buttons the saved list doesn't have yet
+export function normalizeModes(modes) {
+    if (!Array.isArray(modes)) return defaultModes();
+    const out = modes.map((m) => {
+        const base = m.builtin ? builtinMode(m.builtin) : { toolbar: false, hotkey: '', action: 'popup', list: false };
+        return { ...base, ...m };
+    });
+    for (const [id] of BUILTIN) {
+        if (!out.some((m) => m.builtin === id)) {
+            const at = BUILTIN.findIndex((b) => b[0] === id);
+            out.splice(Math.min(at, out.length), 0, builtinMode(id));
+        }
+    }
+    return out;
 }
 
 export function defaultModes() {

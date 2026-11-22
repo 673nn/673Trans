@@ -811,6 +811,13 @@ pub fn sel_toolbar_translate() {
     imp::focus_translate_window();
 }
 
+/// AI button on the bar whose action is "popup": the translate window with that button on.
+#[tauri::command(async)]
+pub fn sel_toolbar_translate_mode(id: String) {
+    crate::window::set_pending_mode(&id);
+    sel_toolbar_translate();
+}
+
 /// Dictionary button: look the selected word up in the dictionary popup.
 #[tauri::command(async)]
 pub fn sel_toolbar_dictionary() {

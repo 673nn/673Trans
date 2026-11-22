@@ -38,7 +38,7 @@ use tauri::api::notification::Notification;
 use tauri::Manager;
 use tauri_plugin_log::LogTarget;
 use tray::*;
-use window::{config_window, open_config_page, take_config_path};
+use window::{config_window, open_config_page, take_config_path, take_translate_mode};
 use window::updater_window;
 use window::{get_screenshot_mode, screenshot_action, take_precapture};
 
@@ -147,6 +147,9 @@ fn main() {
             screenshot_action,
             take_precapture,
             open_config_page,
+            take_translate_mode,
+            register_ai_hotkey,
+            sel_toolbar_translate_mode,
             take_config_path,
             inplace_probe,
             inplace_show,

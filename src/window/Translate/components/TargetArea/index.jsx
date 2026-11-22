@@ -15,7 +15,7 @@ import { BiCollapseVertical, BiExpandVertical } from 'react-icons/bi';
 import { BaseDirectory, readTextFile } from '@tauri-apps/api/fs';
 import { sendNotification } from '@tauri-apps/api/notification';
 import React, { useEffect, useState, useRef } from 'react';
-import { translateModeAtom, applyMode, modeSupported, MODES_KEY, defaultModes } from '../../../../utils/translate_mode';
+import { translateModeAtom, applyMode, modeSupported, MODES_KEY, defaultModes, normalizeModes } from '../../../../utils/translate_mode';
 import { writeText } from '@tauri-apps/api/clipboard';
 import PulseLoader from 'react-spinners/PulseLoader';
 import { TbTransformFilled } from 'react-icons/tb';
@@ -77,7 +77,10 @@ export default function TargetArea(props) {
     const [error, setError] = useState('');
 
     const mode = useAtomValue(translateModeAtom);
-    const [aiModes] = useConfig(MODES_KEY, defaultModes());
+    const [savedModes] = useConfig(MODES_KEY, defaultModes());
+    const aiModes = normalizeModes(savedModes);
+    const listMode = mode !== 'translate' && !!aiModes.find((m) => m.id === mode)?.list;
+    const [copiedLine, setCopiedLine] = useState(-1);
     const sourceText = useAtomValue(sourceTextAtom);
     const sourceLanguage = useAtomValue(sourceLanguageAtom);
     const targetLanguage = useAtomValue(targetLanguageAtom);
@@ -535,12 +538,44 @@ export default function TargetArea(props) {
                     {/* result content */}
                     <CardBody className={`p-[12px] pb-0 ${hide && 'h-0 p-0'}`}>
                         {typeof result === 'string' ? (
-                            <textarea
-                                ref={textAreaRef}
-                                className={`text-[${appFontSize}px] h-0 resize-none bg-transparent select-text outline-none`}
-                                readOnly
-                                value={result}
-                            />
+                            <>
+                                {/* list results (Quick reply): each line is a choice, click to copy */}
+                                {listMode && result.trim() !== '' && (
+                                    <div className='flex flex-col gap-[6px] pb-[6px]'>
+                                        {result
+                                            .split('\n')
+                                            .map((l) => l.replace(/^\s*(?:[-*•]|\d+[.)])\s*/, '').trim())
+                                            .filter(Boolean)
+                                            .map((line, i) => (
+                                                <div
+                                                    key={i}
+                                                    className={`text-[${appFontSize}px] px-[10px] py-[7px] rounded-[10px] bg-default-100 hover:bg-default-200 cursor-pointer select-text`}
+                                                    title={t('translate.click_to_copy')}
+                                                    onClick={() => {
+                                                        writeText(line);
+                                                        setCopiedLine(i);
+                                                        setTimeout(() => setCopiedLine(-1), 1200);
+                                                    }}
+                                                >
+                                                    {line}
+                                                    {copiedLine === i && (
+                                                        <span className='text-primary text-[12px] ml-[8px]'>
+                                                            {t('translate.copied')}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            ))}
+                                    </div>
+                                )}
+                                <textarea
+                                    ref={textAreaRef}
+                                    className={`text-[${appFontSize}px] h-0 resize-none bg-transparent select-text outline-none ${
+                                        listMode && result.trim() !== '' ? 'hidden' : ''
+                                    }`}
+                                    readOnly
+                                    value={result}
+                                />
+                            </>
                         ) : (
                             <div>
                                 {result['pronunciations'] &&

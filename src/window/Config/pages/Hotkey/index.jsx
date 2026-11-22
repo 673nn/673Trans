@@ -69,7 +69,7 @@ function comboFromEvent(e) {
 }
 
 // The shortcut, record / clear buttons and status chip
-function HotkeyControl({ value, onSet }) {
+export function HotkeyControl({ value, onSet }) {
     const { t } = useTranslation();
     const [recording, setRecording] = useState(false);
     const [status, setStatus] = useState('off');

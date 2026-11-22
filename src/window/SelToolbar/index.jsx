@@ -34,6 +34,8 @@ import detect from '../../utils/lang_detect';
 import { filterEnabled } from '../../hooks/useEnabledList';
 import { store } from '../../utils/store';
 import { useConfig } from '../../hooks';
+import { MODES_KEY, normalizeModes, applyMode, modeSupported } from '../../utils/translate_mode';
+import { ModeIcon } from '../../utils/mode_icons';
 import './style.css';
 
 const DEFAULT_TRANSLATE_SERVICES = ['google'];
@@ -48,9 +50,9 @@ async function readPluginInfo(pluginType, pluginName) {
 }
 
 // Run one translate service and return plain text (throws if it can't)
-async function translateWith(instanceKey, text, sourceLanguage, targetLanguage, detected) {
+async function translateWith(instanceKey, text, sourceLanguage, targetLanguage, detected, configOverride = null) {
     const serviceName = getServiceName(instanceKey);
-    const config = (await store.get(instanceKey)) ?? {};
+    const config = configOverride ?? (await store.get(instanceKey)) ?? {};
     let streamed = '';
     const options = {
         config,
@@ -91,6 +93,32 @@ async function translateWith(instanceKey, text, sourceLanguage, targetLanguage, 
         throw new Error('No plain text result');
     }
     return result.trim();
+}
+
+// Run an AI button (Config > AI buttons) on `text` with the first AI service that works
+export async function runAiMode(text, modeId) {
+    const modes = normalizeModes(await store.get(MODES_KEY));
+    const mode = modes.find((m) => m.id === modeId);
+    if (!mode) throw new Error(`Unknown AI button: ${modeId}`);
+    const serviceList = (await store.get('translate_service_list')) ?? DEFAULT_TRANSLATE_SERVICES;
+    const sourceLanguage = (await store.get('translate_source_language')) ?? 'auto';
+    const targetLanguage = (await store.get('translate_target_language')) ?? 'zh_cn';
+    const detected = await detect(text);
+    let lastError = null;
+    for (const instanceKey of serviceList) {
+        if (whetherPluginService(instanceKey)) continue;
+        const serviceName = getServiceName(instanceKey);
+        if (!modeSupported(serviceName, modeId)) continue;
+        const config = (await store.get(instanceKey)) ?? {};
+        if (!(config.enable ?? true)) continue;
+        try {
+            const cfg = applyMode(serviceName, { ...config, stream: false }, modeId, modes);
+            return await translateWith(instanceKey, text, sourceLanguage, targetLanguage, detected, cfg);
+        } catch (e) {
+            lastError = e;
+        }
+    }
+    throw lastError ?? new Error('NO_AI_SERVICE');
 }
 
 // Translate with the user's services (same order as the translate window),
@@ -283,9 +311,10 @@ export default function SelToolbar() {
 
     // Translate, then paste over the selection. Text that can't be edited (chat messages,
     // web pages) gets the translation drawn over it instead (src-tauri/src/inplace.rs).
-    const onReplace = async () => {
+    const onReplace = () => replaceWith('replace', translateForPaste);
+    const replaceWith = async (button, run) => {
         if (busy) return;
-        setBusy('replace');
+        setBusy(button);
         await invoke('sel_toolbar_busy', { busy: true });
         try {
             const text = (await invoke('sel_toolbar_capture', { hide: false })).trim();
@@ -296,7 +325,7 @@ export default function SelToolbar() {
             } catch {
                 probe = null;
             }
-            const result = await translateForPaste(text);
+            const result = await run(text);
             if (probe && probe.found && !probe.editable) {
                 await invoke('sel_toolbar_hide');
                 await invoke('inplace_show', { result });
@@ -304,7 +333,7 @@ export default function SelToolbar() {
                 await invoke('sel_toolbar_paste', { text: result });
             }
         } catch (e) {
-            fail('replace', e);
+            fail(button, e?.message === 'NO_AI_SERVICE' ? new Error(t('translate.mode_unsupported')) : e);
             await invoke('sel_toolbar_busy', { busy: false });
         } finally {
             setBusy(null);
@@ -376,6 +405,20 @@ export default function SelToolbar() {
         }
     };
 
+    // AI buttons (Config > AI buttons): "replace" runs here, "popup" opens the translate window
+    const [aiModes] = useConfig(MODES_KEY, null);
+    const runMode = async (m) => {
+        if ((m.action ?? 'popup') === 'replace') {
+            await replaceWith(`ai:${m.id}`, (text) => runAiMode(text, m.id));
+        } else {
+            try {
+                await invoke('sel_toolbar_translate_mode', { id: m.id });
+            } catch (e) {
+                fail(`ai:${m.id}`, e);
+            }
+        }
+    };
+
     // Every button the bar knows about
     const actions = {
         translate: { title: t('translate.translate'), icon: <LuLanguages />, onClick: onTranslate },
@@ -397,7 +440,10 @@ export default function SelToolbar() {
     };
     hotkeyRef.current = async (action) => {
         try {
-            if (action === 'translate_copy') await onTranslateCopy();
+            if (action.startsWith('ai:')) {
+                const id = action.slice(3);
+                await replaceWith(action, (text) => runAiMode(text, id));
+            } else if (action === 'translate_copy') await onTranslateCopy();
             else if (action === 'replace') await onReplace();
             else if (action === 'speak') await onVoice();
             else if (action === 'ocr_copy' || action === 'ocr_translate_copy') {
@@ -413,6 +459,14 @@ export default function SelToolbar() {
     const buttons = (enabledActions ?? DEFAULT_ACTIONS)
         .filter((name) => name in actions)
         .map((name) => ({ name, ...actions[name] }));
+    for (const m of normalizeModes(aiModes).filter((x) => x.toolbar)) {
+        buttons.push({
+            name: `ai:${m.id}`,
+            title: m.name || t(`translate.mode_${m.builtin}`),
+            icon: <ModeIcon name={m.icon} />,
+            onClick: () => runMode(m),
+        });
+    }
 
     return (
         <div className='sel-toolbar-root'>
