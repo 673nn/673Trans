@@ -40,7 +40,7 @@ export function Config(props) {
                             },
                             (e) => {
                                 setIsLoading(false);
-                                toast.error(t('config.service.test_failed') + e.toString(), { style: toastStyle });
+                                toast.error(t('config.service.test_failed') + (e?.message ?? String(e)), { style: toastStyle });
                             }
                         );
                     }}
