@@ -738,13 +738,22 @@
             "collection": {
                 "anki": {
                     "title": "Anki",
-                    "port": "Port"
+                    "port": "Port",
+                    "guide_1": "Install Anki desktop if you don't have it ([apps.ankiweb.net](https://apps.ankiweb.net)) and open it.",
+                    "guide_2": "In Anki: Tools → Add-ons → Get Add-ons…, enter 2055492159 (AnkiConnect) → OK.",
+                    "guide_3": "Quit Anki completely and open it again so the add-on runs.",
+                    "guide_4": "Keep port 8765 and click Save to test. Anki must be open (minimized is fine) whenever you save a word."
                 },
                 "eudic": {
                     "title": "Eudic",
                     "name": "Collection Name",
-                    "token": "Token"
-                }
+                    "token": "Token",
+                    "guide_1": "Create a Eudic account in the Eudic app or at [my.eudic.net](https://my.eudic.net).",
+                    "guide_2": "Open [OpenAPI Authorization](https://my.eudic.net/OpenAPI/Authorization), sign in and copy the authorization code (starts with \"NIS\").",
+                    "guide_3": "Paste it into Token; Name is the word book to save into (e.g. 673Trans), created if it doesn't exist.",
+                    "guide_4": "Click Save to test. Saved words sync to that word book on every device with Eudic."
+                },
+                "guide_title": "How to set it up"
             },
             "llm": {
                 "api_key": "API Key",

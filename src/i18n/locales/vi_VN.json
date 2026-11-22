@@ -581,6 +581,26 @@
                         "openai_compatible": "Tương thích OpenAI (OpenRouter, Qwen, Kimi…)"
                     }
                 }
+            },
+            "collection": {
+                "guide_title": "Cách thiết lập",
+                "anki": {
+                    "title": "Anki",
+                    "port": "Cổng (Port)",
+                    "guide_1": "Cài Anki bản desktop nếu chưa có ([apps.ankiweb.net](https://apps.ankiweb.net)), rồi mở lên.",
+                    "guide_2": "Trong Anki: Tools → Add-ons → Get Add-ons…, nhập mã 2055492159 (AnkiConnect) → OK.",
+                    "guide_3": "Tắt hẳn Anki rồi mở lại để add-on chạy.",
+                    "guide_4": "Để Port 8765 rồi bấm Lưu để kiểm tra. Mỗi lần lưu từ, Anki phải đang mở (thu nhỏ cũng được)."
+                },
+                "eudic": {
+                    "title": "Eudic",
+                    "name": "Tên sổ từ",
+                    "token": "Token",
+                    "guide_1": "Tạo tài khoản Eudic (欧路词典) trên app Eudic hoặc [my.eudic.net](https://my.eudic.net).",
+                    "guide_2": "Mở trang [OpenAPI Authorization](https://my.eudic.net/OpenAPI/Authorization), đăng nhập rồi chép mã ủy quyền (bắt đầu bằng \"NIS\").",
+                    "guide_3": "Dán mã vào ô Token; ô Tên đặt tên sổ từ muốn lưu vào (vd 673Trans), app tự tạo sổ nếu chưa có.",
+                    "guide_4": "Bấm Lưu để kiểm tra. Từ đã lưu sẽ đồng bộ vào sổ từ đó trên mọi thiết bị dùng Eudic."
+                }
             }
         },
         "translate": {

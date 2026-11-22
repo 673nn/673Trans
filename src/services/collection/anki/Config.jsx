@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { useConfig } from '../../../hooks';
 import { useToastStyle } from '../../../hooks';
 import { collection } from './index';
+import Guide from '../Guide';
 
 export function Config(props) {
     const [isLoading, setIsLoading] = useState(false);
@@ -27,6 +28,10 @@ export function Config(props) {
         ankiConfig !== null && (
             <>
                 <Toaster />
+                <Guide
+                    title={t('services.collection.guide_title')}
+                    steps={[1, 2, 3, 4].map((n) => t(`services.collection.anki.guide_${n}`))}
+                />
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();
