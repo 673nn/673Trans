@@ -25,7 +25,7 @@
 
 ### Nhiều dịch vụ dịch (AI, local) và các nút AI: English Chat, Trau chuốt, Viết lại, Tóm tắt, Giải nghĩa
 
-Có sẵn DeepSeek, Claude, GPT, Gemini và "Tương thích OpenAI" (OpenRouter, Qwen, Kimi, SiliconFlow, LM Studio…). Ngay dưới ô ngôn ngữ của cửa sổ dịch có các nút AI; bấm một nút để AI xử lý đoạn đang chọn, bấm lại để quay về dịch thường. Các nút chỉ chạy với dịch vụ AI (Google, Bing… sẽ báo không hỗ trợ). Trong **Cài đặt → Nút AI** (hoặc nút **+** cạnh hàng nút) có thể ẩn/hiện, đổi thứ tự, sửa câu lệnh, đổi biểu tượng của từng nút, hoặc **thêm nút của riêng bạn** (vd "Email lịch sự", "Giải thích code").
+Có sẵn DeepSeek, Claude, GPT, Gemini và "Tương thích OpenAI" (OpenRouter, Qwen, Kimi, SiliconFlow, LM Studio…). Ngay dưới ô ngôn ngữ của cửa sổ dịch có các nút AI; bấm một nút để AI xử lý đoạn đang chọn, bấm lại để quay về dịch thường. Các nút chỉ chạy với dịch vụ AI (Google, Bing… sẽ báo không hỗ trợ). Trong **Cài đặt → Nút AI** (hoặc nút **+** cạnh hàng nút) có thể ẩn/hiện, đổi thứ tự, sửa câu lệnh, đổi biểu tượng của từng nút, hoặc **thêm nút của riêng bạn** (vd "Email lịch sự", "Giải thích code"). Mỗi nút gán được **phím tắt** riêng (tô chữ rồi bấm: dán đè kết quả hoặc mở cửa sổ dịch) và có thể **hiện trên thanh trợ lý chọn văn bản**.
 
 
 <table>
@@ -45,6 +45,9 @@ Chọn một đoạn lẫn tiếng Anh + tiếng Nhật, app tự phát hiện v
 
 **English Chat**<br/>
 Chuyển mọi ngôn ngữ sang tiếng Anh giọng chat, tự nhiên như người bản xứ nhắn Slack/Discord.
+
+**Trả lời nhanh**<br/>
+Tô một tin nhắn, AI gợi ý 3 câu trả lời tiếng Anh giọng chat (đồng ý / hỏi lại / từ chối khéo); bấm vào câu nào là chép câu đó.
 
 **Trau chuốt**<br/>
 Viết lại cho tự nhiên, mượt, chuyên nghiệp; giữ nguyên ý và ngôn ngữ. Hợp để chỉnh email, bài đăng.

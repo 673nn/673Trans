@@ -282,6 +282,25 @@ fn translate_window(input: bool) -> Window {
     window
 }
 
+// AI button to turn on in the translate window for the next text (hotkey / selection toolbar)
+static PENDING_MODE: std::sync::Mutex<String> = std::sync::Mutex::new(String::new());
+
+pub fn set_pending_mode(id: &str) {
+    *PENDING_MODE.lock().unwrap() = id.to_string();
+}
+
+/// Read once by the translate window when it gets new text.
+#[tauri::command]
+pub fn take_translate_mode() -> String {
+    std::mem::take(&mut *PENDING_MODE.lock().unwrap())
+}
+
+/// Translate the selection with an AI button on (its hotkey, action "popup").
+pub fn selection_translate_mode(id: String) {
+    set_pending_mode(&id);
+    selection_translate();
+}
+
 pub fn selection_translate() {
     use selection::get_text;
     // Get Selected Text

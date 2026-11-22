@@ -10,29 +10,62 @@ import {
     ModalFooter,
     ModalHeader,
     Switch,
+    Tab,
+    Tabs,
     Textarea,
 } from '@nextui-org/react';
-import { LuPlus, LuPencil, LuTrash2, LuRotateCcw, LuArrowUp, LuArrowDown } from 'react-icons/lu';
+import { unregister, isRegistered } from '@tauri-apps/api/globalShortcut';
+import { invoke } from '@tauri-apps/api';
+import toast, { Toaster } from 'react-hot-toast';
+import { LuPlus, LuPencil, LuTrash2, LuRotateCcw, LuArrowUp, LuArrowDown, LuMousePointerClick, LuKeyboard } from 'react-icons/lu';
 import { useTranslation } from 'react-i18next';
 import React, { useState } from 'react';
 
 import { useConfig } from '../../../../hooks/useConfig';
-import { MODES_KEY, defaultModes, builtinMode, newModeId } from '../../../../utils/translate_mode';
+import { MODES_KEY, defaultModes, builtinMode, newModeId, normalizeModes } from '../../../../utils/translate_mode';
+import { HotkeyControl } from '../Hotkey';
+import { useToastStyle } from '../../../../hooks';
 import { MODE_ICONS, ModeIcon } from '../../../../utils/mode_icons';
 
 export default function AiModes() {
     const { t } = useTranslation();
     const a = (k, o) => t(`config.aimodes.${k}`, o);
-    const [modes, setModes] = useConfig(MODES_KEY, defaultModes());
+    const [saved, setModes] = useConfig(MODES_KEY, defaultModes());
+    const modes = saved ? normalizeModes(saved) : null;
+    const toastStyle = useToastStyle();
     const [editing, setEditing] = useState(null); // a copy of the mode being edited
     const [isNew, setIsNew] = useState(false);
 
     if (modes === null) return null;
+
+    // global shortcut of a button: registered right away (Rust: register_ai_hotkey)
+    const swapHotkey = async (oldKey, newKey, id) => {
+        if (oldKey && oldKey !== newKey) await unregister(oldKey).catch(() => {});
+        if (!newKey || newKey === oldKey) return true;
+        if (await isRegistered(newKey).catch(() => false)) {
+            toast.error(t('config.hotkey.is_register'), { style: toastStyle });
+            return false;
+        }
+        try {
+            await invoke('register_ai_hotkey', { shortcut: newKey, id });
+            return true;
+        } catch (e) {
+            toast.error(String(e), { style: toastStyle });
+            return false;
+        }
+    };
     const label = (m) => m.name || (m.builtin ? t(`translate.mode_${m.builtin}`) : a('untitled'));
     const changed = (m) => {
         if (!m.builtin) return false;
         const d = builtinMode(m.builtin);
-        return m.name !== '' || m.icon !== d.icon || m.system !== d.system || m.user !== d.user;
+        return (
+            m.name !== '' ||
+            m.icon !== d.icon ||
+            m.system !== d.system ||
+            m.user !== d.user ||
+            m.action !== d.action ||
+            m.list !== d.list
+        );
     };
     const update = (id, patch) => setModes(modes.map((m) => (m.id === id ? { ...m, ...patch } : m)));
     const move = (i, d) => {
@@ -52,21 +85,30 @@ export default function AiModes() {
             system: '',
             user: '$text',
             enabled: true,
+            toolbar: false,
+            hotkey: '',
+            action: 'popup',
+            list: false,
         });
     };
-    const save = () => {
+    const save = async () => {
         const m = { ...editing, name: editing.name.trim() };
+        const old = modes.find((x) => x.id === m.id);
+        const ok = await swapHotkey(old?.hotkey ?? '', m.hotkey ?? '', m.id);
+        if (!ok) m.hotkey = '';
         if (isNew) setModes([...modes, m]);
         else update(m.id, m);
         setEditing(null);
     };
-    const restoreDefaults = () => {
+    const restoreDefaults = async () => {
+        for (const m of modes.filter((x) => x.builtin && x.hotkey)) await unregister(m.hotkey).catch(() => {});
         const custom = modes.filter((m) => !m.builtin);
         setModes([...defaultModes(), ...custom]);
     };
 
     return (
         <>
+            <Toaster />
             <p className='text-[13px] text-default-500 mb-[14px] leading-relaxed'>{a('desc')}</p>
             <h4 className='config-section-title'>{a('list')}</h4>
             <div className='flex flex-col gap-[8px] mb-[14px]'>
@@ -92,6 +134,20 @@ export default function AiModes() {
                                 )}
                             </div>
                             <p className='text-[12px] text-default-400 truncate'>{m.system || m.user}</p>
+                            {(m.hotkey || m.toolbar) && (
+                                <div className='flex items-center gap-[10px] mt-[3px] text-[11.5px] text-default-500'>
+                                    {m.hotkey && (
+                                        <span className='flex items-center gap-[4px]'>
+                                            <LuKeyboard /> {m.hotkey.replaceAll('+', ' + ')}
+                                        </span>
+                                    )}
+                                    {m.toolbar && (
+                                        <span className='flex items-center gap-[4px]'>
+                                            <LuMousePointerClick /> {a('on_toolbar')}
+                                        </span>
+                                    )}
+                                </div>
+                            )}
                         </div>
                         <Button
                             isIconOnly
@@ -132,7 +188,14 @@ export default function AiModes() {
                                 variant='light'
                                 title={a('reset')}
                                 isDisabled={!changed(m)}
-                                onPress={() => update(m.id, { ...builtinMode(m.builtin), enabled: m.enabled })}
+                                onPress={() =>
+                                    update(m.id, {
+                                        ...builtinMode(m.builtin),
+                                        enabled: m.enabled,
+                                        toolbar: m.toolbar,
+                                        hotkey: m.hotkey,
+                                    })
+                                }
                             >
                                 <LuRotateCcw />
                             </Button>
@@ -143,7 +206,10 @@ export default function AiModes() {
                                 variant='light'
                                 color='danger'
                                 title={a('delete')}
-                                onPress={() => setModes(modes.filter((x) => x.id !== m.id))}
+                                onPress={async () => {
+                                    if (m.hotkey) await unregister(m.hotkey).catch(() => {});
+                                    setModes(modes.filter((x) => x.id !== m.id));
+                                }}
                             >
                                 <LuTrash2 />
                             </Button>
@@ -210,6 +276,60 @@ export default function AiModes() {
                                                 <ModeIcon name={k} />
                                             </Button>
                                         ))}
+                                    </div>
+                                </div>
+                                <div className='flex flex-col gap-[10px] rounded-[12px] bg-default-50 p-[12px]'>
+                                    <div className='flex items-center justify-between gap-[12px]'>
+                                        <div>
+                                            <p className='text-[14px]'>{a('hotkey')}</p>
+                                            <p className='text-[12px] text-default-500'>{a('hotkey_desc')}</p>
+                                        </div>
+                                        <HotkeyControl
+                                            value={editing.hotkey ?? ''}
+                                            onSet={(v) => setEditing({ ...editing, hotkey: v })}
+                                        />
+                                    </div>
+                                    <div className='flex items-center justify-between gap-[12px]'>
+                                        <div>
+                                            <p className='text-[14px]'>{a('toolbar')}</p>
+                                            <p className='text-[12px] text-default-500'>{a('toolbar_desc')}</p>
+                                        </div>
+                                        <Switch
+                                            isSelected={!!editing.toolbar}
+                                            onValueChange={(v) => setEditing({ ...editing, toolbar: v })}
+                                        />
+                                    </div>
+                                    <div className='flex items-center justify-between gap-[12px]'>
+                                        <div>
+                                            <p className='text-[14px]'>{a('action')}</p>
+                                            <p className='text-[12px] text-default-500'>
+                                                {editing.action === 'replace' ? a('action_replace_desc') : a('action_popup_desc')}
+                                            </p>
+                                        </div>
+                                        <Tabs
+                                            size='sm'
+                                            selectedKey={editing.action ?? 'popup'}
+                                            onSelectionChange={(k) => setEditing({ ...editing, action: String(k) })}
+                                        >
+                                            <Tab
+                                                key='replace'
+                                                title={a('action_replace')}
+                                            />
+                                            <Tab
+                                                key='popup'
+                                                title={a('action_popup')}
+                                            />
+                                        </Tabs>
+                                    </div>
+                                    <div className='flex items-center justify-between gap-[12px]'>
+                                        <div>
+                                            <p className='text-[14px]'>{a('list_result')}</p>
+                                            <p className='text-[12px] text-default-500'>{a('list_result_desc')}</p>
+                                        </div>
+                                        <Switch
+                                            isSelected={!!editing.list}
+                                            onValueChange={(v) => setEditing({ ...editing, list: v })}
+                                        />
                                     </div>
                                 </div>
                                 <Textarea
