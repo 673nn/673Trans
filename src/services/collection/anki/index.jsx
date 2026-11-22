@@ -11,10 +11,22 @@ export async function collection(source, target, options = {}) {
     const port = ankiConfig['port'] ?? 8765;
 
     async function ankiConnect(action, version, params = {}) {
-        let res = await fetch(`http://127.0.0.1:${port}`, {
-            method: 'POST',
-            body: Body.json({ action, version, params }),
-        });
+        let res;
+        try {
+            res = await fetch(`http://127.0.0.1:${port}`, {
+                method: 'POST',
+                body: Body.json({ action, version, params }),
+            });
+        } catch (e) {
+            // nothing listens on the port: Anki is closed or AnkiConnect isn't installed
+            const msg = String(e);
+            if (/10061|refused|error trying to connect|Connection refused/i.test(msg)) {
+                throw new Error(
+                    `Không kết nối được Anki (cổng ${port}). Hãy mở Anki trên máy và cài add-on AnkiConnect (mã 2055492159: Tools → Add-ons → Get Add-ons), khởi động lại Anki rồi thử lại.`
+                );
+            }
+            throw e;
+        }
         return res.data;
     }
 
