@@ -11,6 +11,7 @@ import {
     LuCloud,
     LuInfo,
     LuCrop,
+    LuWand2,
     LuGlobe,
 } from 'react-icons/lu';
 import React from 'react';
@@ -21,6 +22,7 @@ const items = [
     { path: '/translate', icon: LuLanguages },
     { path: '/toolbar', icon: LuTextSelect },
     { path: '/recognize', icon: LuScanLine },
+    { path: '/aimodes', icon: LuWand2 },
     { path: '/screenshot', icon: LuCrop },
     { path: '/network', icon: LuGlobe },
     { path: '/hotkey', icon: LuKeyboard },

@@ -15,7 +15,7 @@ import { BiCollapseVertical, BiExpandVertical } from 'react-icons/bi';
 import { BaseDirectory, readTextFile } from '@tauri-apps/api/fs';
 import { sendNotification } from '@tauri-apps/api/notification';
 import React, { useEffect, useState, useRef } from 'react';
-import { translateModeAtom, applyMode, modeSupported } from '../../../../utils/translate_mode';
+import { translateModeAtom, applyMode, modeSupported, MODES_KEY, defaultModes } from '../../../../utils/translate_mode';
 import { writeText } from '@tauri-apps/api/clipboard';
 import PulseLoader from 'react-spinners/PulseLoader';
 import { TbTransformFilled } from 'react-icons/tb';
@@ -77,6 +77,7 @@ export default function TargetArea(props) {
     const [error, setError] = useState('');
 
     const mode = useAtomValue(translateModeAtom);
+    const [aiModes] = useConfig(MODES_KEY, defaultModes());
     const sourceText = useAtomValue(sourceTextAtom);
     const sourceLanguage = useAtomValue(sourceLanguageAtom);
     const targetLanguage = useAtomValue(targetLanguageAtom);
@@ -277,7 +278,8 @@ export default function TargetArea(props) {
                 const instanceConfig = applyMode(
                     translateServiceName,
                     serviceInstanceConfigMap[currentTranslateServiceInstanceKey],
-                    mode
+                    mode,
+                    aiModes
                 );
                 const setHideOnce = invokeOnce(setHide);
                 builtinServices[translateServiceName]

@@ -115,6 +115,24 @@ fn build_window(label: &str, title: &str) -> (Window, bool) {
     }
 }
 
+static CONFIG_PATH: std::sync::Mutex<String> = std::sync::Mutex::new(String::new());
+
+/// Open the settings window on a page (e.g. "/aimodes" from the translate window).
+#[tauri::command(async)]
+pub fn open_config_page(path: String) {
+    *CONFIG_PATH.lock().unwrap() = path.clone();
+    config_window();
+    if let Some(w) = APP.get().and_then(|a| a.get_window("config")) {
+        let _ = w.emit("config_navigate", path);
+    }
+}
+
+/// The page asked for by open_config_page, once (read by the settings window when it loads).
+#[tauri::command]
+pub fn take_config_path() -> String {
+    std::mem::take(&mut *CONFIG_PATH.lock().unwrap())
+}
+
 pub fn config_window() {
     let (window, exists) = build_window("config", "Config");
     window
