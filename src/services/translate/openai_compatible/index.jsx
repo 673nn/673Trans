@@ -1,7 +1,7 @@
 // Any provider with an OpenAI compatible chat completions API
 // (OpenRouter, SiliconFlow, Qwen, Kimi, LM Studio, ...). URL and model are typed by the user.
 import { translate as openaiTranslate } from '../openai';
-import { DEFAULT_SYSTEM_PROMPT, DEFAULT_USER_PROMPT, cleanResult } from '../_llm/prompt';
+import { DEFAULT_SYSTEM_PROMPT, DEFAULT_USER_PROMPT, cleanResult, llmArgs } from '../_llm/prompt';
 
 export async function translate(text, from, to, options = {}) {
     const { config } = options;
@@ -20,7 +20,7 @@ export async function translate(text, from, to, options = {}) {
                 { role: 'system', content: config.systemPrompt ?? DEFAULT_SYSTEM_PROMPT },
                 { role: 'user', content: config.userPrompt ?? DEFAULT_USER_PROMPT },
             ],
-            requestArguments: '{}',
+            requestArguments: JSON.stringify(llmArgs(config, {})),
             timeout: config.timeout,
         },
     });

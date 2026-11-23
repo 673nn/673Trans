@@ -1,6 +1,6 @@
 // Claude: Anthropic Messages API (https://docs.claude.com)
 import { fetch, Body } from '@tauri-apps/api/http';
-import { DEFAULT_SYSTEM_PROMPT, DEFAULT_USER_PROMPT, fillPrompt, cleanResult } from '../_llm/prompt';
+import { DEFAULT_SYSTEM_PROMPT, DEFAULT_USER_PROMPT, fillPrompt, cleanResult, llmArgs } from '../_llm/prompt';
 
 export const DEFAULT_REQUEST_PATH = 'https://api.anthropic.com/v1/messages';
 export const DEFAULT_MODEL = 'claude-haiku-5-5';
@@ -23,6 +23,7 @@ export async function translate(text, from, to, options = {}) {
         body: Body.json({
             model: config.model || DEFAULT_MODEL,
             max_tokens: 4096,
+            ...llmArgs(config, { effort: false }),
             system: fillPrompt(config.systemPrompt ?? DEFAULT_SYSTEM_PROMPT, text, from, to, detect),
             messages: [
                 {

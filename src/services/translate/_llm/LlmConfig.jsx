@@ -3,7 +3,7 @@
 // To add another provider: copy src/services/translate/deepseek, change the
 // defaults, then register it in src/services/translate/index.jsx,
 // src-tauri/src/config.rs (builtin_translate_list) and the i18n files.
-import { Input, Button, Switch, Textarea } from '@nextui-org/react';
+import { Input, Button, Switch, Textarea, Select, SelectItem } from '@nextui-org/react';
 import toast, { Toaster } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { open } from '@tauri-apps/api/shell';
@@ -58,6 +58,10 @@ export function LlmConfig(props) {
         extraFields = [],
         // async (config) => void, throws when the settings do not work. Default: translate "hello"
         test,
+        // which "Advanced" options the provider understands (translate mode only)
+        advanced = { thinking: false, effort: true, extraJson: true },
+        // async (config) => string: account balance (DeepSeek)
+        balance,
     } = props;
     const { t } = useTranslation();
     const [config, setConfig] = useConfig(
@@ -74,8 +78,38 @@ export function LlmConfig(props) {
         { sync: false }
     );
     const [isLoading, setIsLoading] = useState(false);
+    const [testing, setTesting] = useState(false);
+    const [balanceText, setBalanceText] = useState('');
+    const [balanceLoading, setBalanceLoading] = useState(false);
     const toastStyle = useToastStyle();
     const set = (key, value) => setConfig({ ...config, [key]: value });
+    const runTest = () =>
+        test ? test(config) : translate('hello', Language.auto, Language.vi, { config: { ...config, stream: false } });
+
+    // "Test connection": one real request without saving, with the time it took
+    const onTest = async () => {
+        setTesting(true);
+        const started = Date.now();
+        try {
+            const out = await runTest();
+            const ms = Date.now() - started;
+            const sample = typeof out === 'string' ? ` · "${out.slice(0, 60)}"` : '';
+            toast.success(t('services.llm.test_ok', { ms }) + sample, { style: toastStyle });
+        } catch (e) {
+            toast.error(t('config.service.test_failed') + ': ' + (e?.message ?? String(e)), { style: toastStyle });
+        }
+        setTesting(false);
+    };
+    const onBalance = async () => {
+        setBalanceLoading(true);
+        try {
+            setBalanceText(await balance(config));
+        } catch (e) {
+            setBalanceText('');
+            toast.error(String(e?.message ?? e), { style: toastStyle });
+        }
+        setBalanceLoading(false);
+    };
 
     return (
         config !== null && (
@@ -84,10 +118,7 @@ export function LlmConfig(props) {
                     e.preventDefault();
                     setIsLoading(true);
                     // Test with one real request before saving
-                    const runTest = test
-                        ? test(config)
-                        : translate('hello', Language.auto, Language.vi, { config: { ...config, stream: false } });
-                    Promise.resolve(runTest).then(
+                    Promise.resolve(runTest()).then(
                         () => {
                             setIsLoading(false);
                             setConfig(config, true);
@@ -96,7 +127,9 @@ export function LlmConfig(props) {
                         },
                         (e) => {
                             setIsLoading(false);
-                            toast.error(t('config.service.test_failed') + ': ' + e.toString(), { style: toastStyle });
+                            toast.error(t('config.service.test_failed') + ': ' + (e?.message ?? String(e)), {
+                                style: toastStyle,
+                            });
                         }
                     );
                 }}
@@ -229,6 +262,97 @@ export function LlmConfig(props) {
                         </div>
                     </Group>
                 )}
+
+                {mode === 'translate' && (
+                    <Group title={t('services.llm.advanced')}>
+                        <Field
+                            label={t('services.llm.temperature')}
+                            desc={t('services.llm.temperature_desc')}
+                        >
+                            <Input
+                                aria-label='temperature'
+                                type='number'
+                                min={0}
+                                max={2}
+                                step={0.1}
+                                placeholder={t('services.llm.provider_default')}
+                                value={config.temperature ?? ''}
+                                variant='bordered'
+                                onValueChange={(v) => set('temperature', v)}
+                            />
+                        </Field>
+                        <Field
+                            label={t('services.llm.max_tokens')}
+                            desc={t('services.llm.max_tokens_desc')}
+                        >
+                            <Input
+                                aria-label='max tokens'
+                                type='number'
+                                min={1}
+                                step={256}
+                                placeholder={t('services.llm.provider_default')}
+                                value={config.maxTokens ?? ''}
+                                variant='bordered'
+                                onValueChange={(v) => set('maxTokens', v)}
+                            />
+                        </Field>
+                        {advanced.thinking && (
+                            <Field
+                                label={t('services.llm.thinking')}
+                                desc={t('services.llm.thinking_desc')}
+                            >
+                                <Select
+                                    aria-label='thinking'
+                                    variant='bordered'
+                                    selectedKeys={[config.thinking || 'default']}
+                                    onSelectionChange={(k) => {
+                                        const v = k.currentKey;
+                                        set('thinking', v === 'default' ? '' : v);
+                                    }}
+                                >
+                                    <SelectItem key='default'>{t('services.llm.provider_default')}</SelectItem>
+                                    <SelectItem key='disabled'>{t('services.llm.thinking_off')}</SelectItem>
+                                    <SelectItem key='enabled'>{t('services.llm.thinking_on')}</SelectItem>
+                                </Select>
+                            </Field>
+                        )}
+                        {advanced.effort && (
+                            <Field
+                                label={t('services.llm.effort')}
+                                desc={t('services.llm.effort_desc')}
+                            >
+                                <Select
+                                    aria-label='reasoning effort'
+                                    variant='bordered'
+                                    selectedKeys={[config.reasoningEffort || 'default']}
+                                    onSelectionChange={(k) => {
+                                        const v = k.currentKey;
+                                        set('reasoningEffort', v === 'default' ? '' : v);
+                                    }}
+                                >
+                                    <SelectItem key='default'>{t('services.llm.not_sent')}</SelectItem>
+                                    <SelectItem key='low'>{t('services.llm.effort_low')}</SelectItem>
+                                    <SelectItem key='medium'>{t('services.llm.effort_medium')}</SelectItem>
+                                    <SelectItem key='high'>{t('services.llm.effort_high')}</SelectItem>
+                                </Select>
+                            </Field>
+                        )}
+                        {advanced.extraJson && (
+                            <div className='py-2'>
+                                <Textarea
+                                    label={t('services.llm.extra_args')}
+                                    labelPlacement='outside'
+                                    variant='bordered'
+                                    minRows={2}
+                                    placeholder='{"top_p": 0.9}'
+                                    value={config.extraArgs ?? ''}
+                                    onValueChange={(v) => set('extraArgs', v)}
+                                />
+                                <p className='config-desc'>{t('services.llm.extra_args_desc')}</p>
+                            </div>
+                        )}
+                    </Group>
+                )}
                 {mode === 'ocr' && (
                     <Group title={t('services.llm.prompt')}>
                         <div className='py-2'>
@@ -244,12 +368,32 @@ export function LlmConfig(props) {
                     </Group>
                 )}
 
+                <div className='flex items-center gap-[8px] mt-4 flex-wrap'>
+                    <Button
+                        variant='flat'
+                        isLoading={testing}
+                        onPress={onTest}
+                    >
+                        {t('services.llm.test')}
+                    </Button>
+                    {balance && (
+                        <Button
+                            variant='flat'
+                            isLoading={balanceLoading}
+                            isDisabled={!config.apiKey}
+                            onPress={onBalance}
+                        >
+                            {t('services.llm.balance')}
+                        </Button>
+                    )}
+                    {balanceText && <span className='text-[13px] text-default-600'>{balanceText}</span>}
+                </div>
                 <Button
                     type='submit'
                     isLoading={isLoading}
                     fullWidth
                     color='primary'
-                    className='llm-save mt-4'
+                    className='llm-save mt-3'
                 >
                     {t('common.save')}
                 </Button>

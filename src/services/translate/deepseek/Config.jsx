@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import React from 'react';
 
-import { translate, DEFAULT_MODEL, DEFAULT_REQUEST_PATH } from './index';
+import { translate, balance, DEFAULT_MODEL, DEFAULT_REQUEST_PATH } from './index';
 import { LlmConfig } from '../_llm/LlmConfig';
 
 export function Config(props) {
@@ -14,6 +14,8 @@ export function Config(props) {
             defaults={{ requestPath: DEFAULT_REQUEST_PATH, model: DEFAULT_MODEL }}
             keyUrl='https://platform.deepseek.com/api_keys'
             modelHint={t('services.translate.deepseek.model_hint')}
+            advanced={{ thinking: true, effort: true, extraJson: true }}
+            balance={balance}
         />
     );
 }
