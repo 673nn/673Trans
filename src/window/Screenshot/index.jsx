@@ -599,6 +599,14 @@ export default function Screenshot() {
                 }}
             />
 
+            {/* before a region is drawn, dim the whole screen so the selection stands out */}
+            {!showRect && !(opts.detect && phase === 'idle' && hover) && (
+                <div
+                    className='fixed inset-0 pointer-events-none'
+                    style={{ background: 'rgba(0,0,0,0.4)' }}
+                />
+            )}
+
             {/* dim everything outside the selection */}
             {showRect && (
                 <div
@@ -631,7 +639,7 @@ export default function Screenshot() {
                         top: hover.t,
                         width: hover.r - hover.l,
                         height: hover.b - hover.t,
-                        background: 'rgba(56,189,248,0.15)',
+                        boxShadow: '0 0 0 9999px rgba(0,0,0,0.4)',
                         border: '2px solid #38bdf8',
                     }}
                 />
