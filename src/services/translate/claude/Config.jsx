@@ -8,6 +8,7 @@ export function Config(props) {
     const { t } = useTranslation();
     return (
         <LlmConfig
+            advanced={{ thinking: false, effort: false, extraJson: true }}
             {...props}
             title={t('services.translate.claude.title')}
             translate={translate}

@@ -23,3 +23,26 @@ export function cleanResult(result) {
     }
     return target.trim();
 }
+
+// Optional request parameters from the "Advanced" settings (empty = provider default).
+// thinking: the provider understands DeepSeek's `thinking: { type }` parameter.
+export function llmArgs(config, { thinking = false, effort = true } = {}) {
+    const args = {};
+    const num = (v) => (v === '' || v === undefined || v === null ? null : Number(v));
+    const temperature = num(config.temperature);
+    if (temperature !== null && !Number.isNaN(temperature)) args.temperature = temperature;
+    const maxTokens = num(config.maxTokens);
+    if (maxTokens !== null && !Number.isNaN(maxTokens) && maxTokens > 0) args.max_tokens = Math.round(maxTokens);
+    if (effort && config.reasoningEffort) args.reasoning_effort = config.reasoningEffort;
+    if (thinking && config.thinking) args.thinking = { type: config.thinking };
+    if (config.extraArgs && config.extraArgs.trim()) {
+        let extra;
+        try {
+            extra = JSON.parse(config.extraArgs);
+        } catch {
+            throw new Error('Extra parameters: invalid JSON');
+        }
+        Object.assign(args, extra);
+    }
+    return args;
+}
