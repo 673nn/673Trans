@@ -26,6 +26,18 @@
 
 <hr/>
 
+## 673Trans là gì?
+
+673Trans là app dịch chạy nền, nằm dưới khay hệ thống. Bạn không cần copy rồi dán sang trang dịch: bôi đen chữ ở bất kỳ đâu (trình duyệt, Word, Slack, game, PDF…) là có ngay bản dịch, bản viết lại hoặc nghĩa của từ, ngay cạnh con trỏ.
+
+**Cách dùng:**
+
+1. **Bôi đen chữ**: một thanh icon nhỏ hiện cạnh con trỏ.
+2. **Chọn việc cần làm**: dịch, dịch và dán đè, tra từ, đọc to, hoặc một nút AI như English Chat hay Trau chuốt. Mỗi việc cũng gán được phím tắt riêng.
+3. **Xem kết quả**: bản dịch hiện trong cửa sổ nhỏ, so sánh được nhiều dịch vụ cùng lúc. Với chữ trong ảnh hay video, bấm phím chụp màn hình rồi khoanh vùng để OCR và dịch.
+
+Mặc định dùng Google miễn phí. Muốn dịch hay hơn, tự nhiên hơn thì gắn khoá API của các AI (DeepSeek, Claude, GPT, Gemini…). Giao diện có tiếng Việt và tiếng Anh.
+
 ## Điểm nổi bật
 
 - **Nút AI**: English Chat, Trả lời nhanh, Trau chuốt, Viết lại, Tóm tắt, Giải nghĩa, hoặc tự tạo nút của riêng bạn.
