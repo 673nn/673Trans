@@ -2,7 +2,7 @@
 
 # 673Trans
 
->Trình dịch chọn-là-dịch cho Windows: giao diện tiếng Anh/Việt gọn hiện đại, Sử dụng nhiều dịch mặc định như Google, Bing và các dịch vụ tích hợp bằng AI (DeepSeek, Claude, GPT, Gemini...), Có sẵn từ điển Anh–Việt, voice US/UK, OCR và giọng đọc AI, thanh icon nổi khi bôi đen chữ ở bất kỳ app nào có khả năng dịch, viết lại, chữa chính tả, đọc, tra từ điển, bookmark...
+> Bôi đen chữ ở bất kỳ app nào để dịch, viết lại, tra từ hay nghe đọc. Dùng được Google, Bing và các AI (DeepSeek, Claude, GPT, Gemini…), kèm từ điển Anh–Việt offline, OCR và chụp màn hình có công cụ vẽ.
 
 ![License](https://img.shields.io/badge/license-GPL--3.0-blue)
 ![React](https://img.shields.io/badge/-React-61dafb?logo=react&logoColor=white)
@@ -14,147 +14,109 @@
 <br/>
 
 <p align="center">
-  <a href="https://github.com/nguyenguyen673/673Trans/releases/latest"><img src="https://img.shields.io/badge/%E2%AC%87%20T%E1%BA%A3i%20673Trans%20(.exe)-Releases-bff03a?style=for-the-badge&labelColor=0b2a12" alt="Tải 673Trans"/></a>
+  <a href="https://github.com/nguyenguyen673/673Trans/releases/latest"><img src="https://img.shields.io/badge/%E2%AC%87%20T%E1%BA%A3i%20673Trans-Releases-bff03a?style=for-the-badge&labelColor=0b2a12" alt="Tải 673Trans"/></a>
 </p>
-<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.9/673Trans-3.27.9-windows.exe">Windows: 673Trans-3.27.9.exe</a></p>
-<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.9/673Trans-3.27.9-mac-aarch64.dmg">macOS Apple Silicon (M1/M2/M3…): .dmg</a> &middot; <a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.9/673Trans-3.27.9-mac-x64.dmg">macOS Intel: .dmg</a></p>
-<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases">Tất cả bản phát hành</a></p>
-<p align="center">Windows 10/11: chỉ cần 1 file <code>.exe</code>, không cần cài thêm gì &middot; macOS: bản thử nghiệm, xem hướng dẫn mở app ở mục bên dưới &middot; Phiên bản hiện tại: 3.27.9</p>
+<p align="center">
+  <a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.9/673Trans-3.27.9-windows.exe">Windows 10/11 (.exe)</a> &middot;
+  <a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.9/673Trans-3.27.9-mac-aarch64.dmg">macOS Apple Silicon</a> &middot;
+  <a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.9/673Trans-3.27.9-mac-x64.dmg">macOS Intel</a> &middot;
+  <a href="https://github.com/nguyenguyen673/673Trans/releases">Các bản khác</a>
+</p>
+<p align="center">Bản 3.27.9 &middot; Windows chỉ cần 1 file, không cần cài &middot; app tự báo khi có bản mới</p>
 
 <hr/>
 
+## Điểm nổi bật
+
+- **Nút AI**: English Chat, Trả lời nhanh, Trau chuốt, Viết lại, Tóm tắt, Giải nghĩa, hoặc tự tạo nút của riêng bạn.
+- **Dịch và thay thế**: bản dịch dán đè đúng chỗ đang chọn; với chữ chỉ đọc (web, PDF) thì hiện đè lên ngay tại chỗ.
+- **Từ điển Anh–Việt offline** có phiên âm và giọng đọc UK/US.
+- **OCR và chụp màn hình** có công cụ vẽ, dịch luôn chữ trong ảnh.
+- **Giọng đọc AI** và giọng Edge neural có sẵn.
+- **Tự cập nhật**, sao lưu lên WebDAV hoặc Google Drive.
+
+<p align="center"><img src="asset/demo-translate.gif" width="880"/></p>
+
 ## Tính năng
 
-### Nhiều dịch vụ dịch (AI, local) và các nút AI: English Chat, Trau chuốt, Viết lại, Tóm tắt, Giải nghĩa
+<details>
+<summary><b>Nút AI</b></summary>
 
-Có sẵn DeepSeek, Claude, GPT, Gemini và "Tương thích OpenAI" (OpenRouter, Qwen, Kimi, SiliconFlow, LM Studio…). Ngay dưới ô ngôn ngữ của cửa sổ dịch có các nút AI; bấm một nút để AI xử lý đoạn đang chọn, bấm lại để quay về dịch thường. Các nút chỉ chạy với dịch vụ AI (Google, Bing… sẽ báo không hỗ trợ). Trong **Cài đặt → Nút AI** (hoặc nút **+** cạnh hàng nút) có thể ẩn/hiện, đổi thứ tự, sửa câu lệnh, đổi biểu tượng của từng nút, hoặc **thêm nút của riêng bạn** (vd "Email lịch sự", "Giải thích code"). Mỗi nút gán được **phím tắt** riêng (tô chữ rồi bấm: dán đè kết quả hoặc mở cửa sổ dịch) và có thể **hiện trên thanh trợ lý chọn văn bản**.
+Các nút nằm ngay dưới thanh ngôn ngữ của cửa sổ dịch; bấm một nút để AI xử lý đoạn đang chọn, bấm lại để quay về dịch thường. Chỉ chạy với dịch vụ AI.
 
+| Nút | Làm gì |
+|---|---|
+| English Chat | Chuyển mọi ngôn ngữ sang tiếng Anh giọng chat tự nhiên |
+| Trả lời nhanh | Gợi ý 3 câu trả lời cho một tin nhắn, bấm câu nào là chép câu đó |
+| Trau chuốt | Viết lại mượt, chuyên nghiệp, giữ nguyên ý |
+| Viết lại | Sửa chính tả, ngữ pháp, ít can thiệp |
+| Tóm tắt | Rút gọn thành vài ý chính |
+| Giải nghĩa | Nghĩa tổng quát, dịch sát nghĩa và giải thích từ khó |
 
-<table>
-<tr>
-<td width="65%" align="center"><b>Dịch thường</b><br/><img src="asset/ui-translate-multi.png" width="560"/></td>
-<td valign="middle">
+Trong **Cài đặt → Tính năng → Nút AI** (hoặc nút **+** cạnh hàng nút) bạn ẩn/hiện, sắp xếp, sửa câu lệnh, đổi biểu tượng hoặc thêm nút mới. Mỗi nút gán được phím tắt riêng (dán đè kết quả hoặc mở cửa sổ dịch) và có thể hiện trên thanh icon nổi.
 
-**Dịch văn bản trộn nhiều ngôn ngữ**<br/>
-Chọn một đoạn lẫn tiếng Anh + tiếng Nhật, app tự phát hiện và dịch sang ngôn ngữ đích (ở đây là Tiếng Việt) bằng dịch vụ bạn chọn, ví dụ Gemini.
+</details>
 
-</td>
-</tr>
-<tr>
-<td width="65%" align="center"><b>Viết lại, chính tả</b><br/><img src="asset/ui-mode-rewrite-v4.png" width="560"/></td>
-<td valign="middle">
+<details>
+<summary><b>Thanh icon nổi khi chọn chữ</b></summary>
 
+<img src="asset/ui-toolbar-v2.png" align="right" width="460"/>
 
-**English Chat**<br/>
-Chuyển mọi ngôn ngữ sang tiếng Anh giọng chat, tự nhiên như người bản xứ nhắn Slack/Discord.
-
-**Trả lời nhanh**<br/>
-Tô một tin nhắn, AI gợi ý 3 câu trả lời tiếng Anh giọng chat (đồng ý / hỏi lại / từ chối khéo); bấm vào câu nào là chép câu đó.
-
-**Trau chuốt**<br/>
-Viết lại cho tự nhiên, mượt, chuyên nghiệp; giữ nguyên ý và ngôn ngữ. Hợp để chỉnh email, bài đăng.
-
-**Viết lại, chính tả** (ảnh bên)<br/>
-Sửa lỗi chính tả, ngữ pháp, dấu câu; giữ giọng văn và độ dài, ít can thiệp hơn Trau chuốt.
-
-**Tóm tắt**<br/>
-Rút gọn đoạn dài thành vài ý chính, ngắn gọn dễ đọc.
-
-**Giải nghĩa**<br/>
-Nghĩa tổng quát → dịch sát nghĩa → giải nghĩa các từ/cụm khó (thành ngữ, tiếng lóng, viết tắt, giọng điệu).
-
-**Phong cách của riêng bạn**<br/>
-Tự viết lời dặn cho AI (Prompt hệ thống và Prompt người dùng) trong cài đặt từng dịch vụ AI, ví dụ "dịch thân mật như người bản xứ", "giữ nguyên thuật ngữ game", "xưng hô lịch sự". Dùng `$text`, `$from`, `$to` để chèn văn bản và ngôn ngữ. Áp dụng cho dịch thường.
-
-</td>
-</tr>
-</table>
-
-Công tắc nguồn cho từng dịch vụ: tắt thì chỉ dịch khi bạn mở thẻ của nó.
-
-### Thanh icon nổi khi chọn chữ
-
-<img src="asset/ui-toolbar-v2.png" align="right" width="520"/>
-
-- Hiện cạnh con trỏ khi bôi đen chữ, nhấp đúp một từ, hoặc bấm Ctrl+A trong ô nhập, ở bất kỳ app nào.
-- 7 nút bật/tắt được: Dịch, Dịch và thay thế (dán bản dịch đè lên đoạn đang chọn), Dịch và sao chép, Đọc to, Tra từ điển, Gõ từ, Sao chép.
-- Kéo thả đổi thứ tự nút; ngang/dọc; chỉ icon, chỉ chữ hoặc cả hai; độ lệch; **bộ lọc ứng dụng** (danh sách chặn hoặc danh sách cho phép, chọn từ các app đang mở); có ô **Xem trước** ngay trong cài đặt.
+- Hiện cạnh con trỏ khi bôi đen chữ, nhấp đúp một từ hoặc Ctrl+A, ở bất kỳ app nào.
+- Các nút: Dịch, Dịch và thay thế, Dịch và sao chép, Đọc to, Tra từ điển, Gõ từ, Sao chép, cùng các nút AI bạn chọn.
+- Kéo thả đổi thứ tự, ngang/dọc, chỉ icon hoặc có chữ, lọc theo ứng dụng, có ô xem trước trong cài đặt.
 
 <br clear="right"/>
 
-**Dịch và thay thế**: bôi đen một câu, bấm nút thay thế, bản dịch được dán đè đúng chỗ đang chọn, không cần copy-paste.
-
-> **Lưu ý:** bản dịch thay thế theo đúng giọng bạn muốn: thân mật, lịch sự, chat-chit như nhắn tin bạn bè… Chỉnh trong phần prompt tùy chỉnh của dịch vụ AI.
+**Dịch và thay thế**: bản dịch được dán đè đúng chỗ đang chọn. Nếu chữ không sửa được (trang web, PDF), bản dịch hiện đè lên ngay vị trí đó, cuộn trang hoặc bấm Esc là tắt.
 
 <p align="center"><img src="asset/ui-replace-v3.png" width="880"/></p>
 
-### Từ điển
+</details>
 
-Tô một từ, bấm icon quyển sách hoặc dùng phím tắt.
+<details>
+<summary><b>Từ điển</b></summary>
 
-<p align="center"><img src="asset/ui-dict-select.png" width="880"/></p>
+<img src="asset/ui-dict.png" align="right" width="280"/>
 
-<img src="asset/ui-dict.png" align="right" width="300"/>
-
-- Popup kiểu Cambridge hiện cạnh con trỏ, có phiên âm IPA và nút loa phát giọng **UK** và **US** (ảnh minh hoạ: Wiktionary).
-- Có sẵn 3 từ điển, đổi bằng menu (và thêm từ điển khác theo ý bạn bằng plugin): **Anh–Việt offline** (103k từ, **đã nhúng sẵn trong exe**, tra ngược Việt → Anh, gợi ý từ gần giống), **Wiktionary** (giọng ghi âm thật, định nghĩa, câu ví dụ, lưu đệm), **Từ điển AI** (chọn hãng DeepSeek, OpenAI, Claude, Gemini hoặc tương thích OpenAI, nhập khoá API riêng).
-- ⭐ lưu từ vào sổ từ vựng, 🕘 lịch sử tra từ, ô gõ từ (có phím tắt riêng), nút "Giải thích bằng AI" chạy khi bấm.
-- Nhớ kích thước popup; tuỳ chọn đọc giọng US bằng TTS.
+- Tô một từ rồi bấm icon quyển sách hoặc phím tắt; popup kiểu Cambridge có IPA và giọng UK/US.
+- 3 nguồn: **Anh–Việt offline** (103k từ, nhúng sẵn, tra ngược Việt → Anh), **Wiktionary** (giọng ghi âm thật, câu ví dụ), **Từ điển AI**. Thêm nguồn khác bằng plugin.
+- Lưu từ vào sổ từ vựng (có thể đẩy sang Anki, Eudic), lịch sử tra, giải thích bằng AI.
 
 <br clear="right"/>
 
-### Dịch vụ, OCR và giọng đọc
+</details>
 
-Dịch, OCR và giọng nói đều có sẵn các hãng AI (DeepSeek, Claude, GPT/OpenAI, Gemini, tương thích OpenAI), bật/tắt và sắp xếp thứ tự bằng kéo thả:
+<details>
+<summary><b>Dịch vụ, OCR và giọng đọc</b></summary>
 
-<table>
-<tr>
-<td align="center"><b>Dịch</b><br/><img src="asset/ui-services-v2.png" width="440"/></td>
-<td align="center"><b>OCR</b><br/><img src="asset/ui-services-ocr-v2.png" width="440"/></td>
-</tr>
-</table>
+- **Dịch**: Google (mặc định), Bing (cần khoá Azure miễn phí), DeepSeek, Claude, GPT, Gemini và mọi dịch vụ tương thích OpenAI (OpenRouter, Qwen, Kimi, LM Studio…). Dịch vụ AI có mục Nâng cao: temperature, độ dài tối đa, chế độ suy nghĩ, kiểm tra kết nối.
+- **OCR**: Windows OCR và Tesseract offline (Anh, Việt, Trung) có sẵn; thêm OCR bằng AI.
+- **Giọng đọc**: giọng Edge neural có sẵn, ElevenLabs, OpenAI TTS, Gemini TTS.
+- Bật/tắt và kéo thả sắp xếp từng dịch vụ mà không cần xoá.
 
-- Công tắc bật/tắt cho mọi dịch vụ (dịch, OCR, giọng nói, từ điển, sổ từ vựng) mà không cần xoá. Mặc định bật Google. Bing cần khóa Azure Translator miễn phí (gói F0, 2 triệu ký tự/tháng) vì Microsoft đã đóng cổng dịch Bing miễn phí.
-- Có sẵn và bật sẵn: OCR của Windows (System) và **Tesseract** (dữ liệu tiếng Anh, Việt, Trung đã nhúng trong exe, chạy offline). OCR bằng AI: DeepSeek, Gemini, GPT, Claude, tương thích OpenAI.
-- Giọng đọc: ElevenLabs, OpenAI TTS, Gemini TTS, và **Local TTS**: giọng Edge neural **có sẵn trong exe** (cần mạng, không cần cài gì); ai có server riêng thì dùng thêm Piper offline và kho audio người thật.
+</details>
 
-### Phím tắt và cài đặt dịch
+<details>
+<summary><b>Chụp màn hình</b></summary>
 
-<table>
-<tr>
-<td align="center"><b>Phím tắt</b><br/><img src="asset/ui-hotkeys-v2.png" width="440"/></td>
-<td align="center"><b>Cài đặt dịch</b><br/><img src="asset/ui-translate-settings.png" width="440"/></td>
-</tr>
-</table>
+Màn hình tối đi để bạn khoanh vùng; chọn xong có thanh công cụ vẽ (bút, dạ quang, mũi tên, khung, elip, chữ, làm mờ) và thanh thao tác (sao chép, lưu, OCR, dịch ảnh). Enter xong, Esc huỷ, Ctrl+Z/Y, Ctrl+C, Ctrl+S. Tuỳ chỉnh được kính lúp, phát hiện cửa sổ, màu nét mặc định, định dạng và nơi lưu ảnh.
 
-- Cài đặt dịch: ngôn ngữ nguồn, đích và đích dự phòng, công cụ phát hiện ngôn ngữ, tự động sao chép, dịch cộng dồn, dịch khi đang gõ; có ô **Xem trước** kết quả dịch ngay trong cài đặt.
+</details>
 
-- Bật/tắt tất cả, bật/tắt thanh trợ lý, chụp màn hình (gán được cả Print Screen), dịch và chép, dịch và thay thế, đọc to vùng chọn, OCR và chép, dịch ảnh và chép, đổi cặp ngôn ngữ đích, tra từ điển, tra từ gõ tay.
-- Nút icon gọn: bấm để gán phím, ✕ để huỷ, thùng rác để xoá; rê chuột để xem chú thích.
+<details>
+<summary><b>Tuỳ chỉnh</b></summary>
 
-### Cửa sổ dịch và giao diện
+<p align="center"><img src="asset/demo-settings.gif" width="760"/></p>
 
-- Vị trí riêng cho chữ nhập và chữ chọn/ảnh chụp, ẩn vùng nhập hoặc thanh ngôn ngữ, tự chỉnh chiều cao, ghim mặc định, đóng khi mất tiêu điểm.
-- Tiếng Việt, font Inter có sẵn, màu chủ đạo chọn được, sáng/tối, cỡ chữ kéo theo từng px, nhớ kích thước cửa sổ.
-- Lịch sử dịch: chọn 16 / 32 / 64 hàng mỗi trang. Sao lưu: tệp cục bộ, WebDAV và Google Drive nằm chung một trang.
+- **Phím tắt** cho gần như mọi thao tác: dịch vùng chọn, dịch và thay thế, chụp màn hình (cả Print Screen), OCR, tra từ, đọc to, từng nút AI.
+- **Cài đặt dịch**: ngôn ngữ nguồn/đích và đích dự phòng, tự sao chép, dịch khi đang gõ, có ô xem trước.
+- **Giao diện**: tiếng Việt/Anh, sáng/tối, màu chủ đạo, cỡ chữ, vị trí cửa sổ, ghim, thu gọn ô nguồn.
+- **Khác**: proxy HTTP/SOCKS5, lịch sử dịch, sao lưu ra tệp, WebDAV hoặc Google Drive.
 
-### Chụp màn hình và mạng
+</details>
 
-- **Chụp màn hình có công cụ vẽ** (phím tắt riêng hoặc menu khay): chọn vùng xong hiện thanh công cụ dọc (vẽ) và ngang (thao tác) ngay cạnh vùng chụp: bút, bút dạ quang, mũi tên, khung chữ nhật, elip, chữ, làm mờ (mosaic), chọn màu, cỡ nét, hoàn tác/làm lại; rồi sao chép, lưu, OCR hoặc dịch ảnh. Chụp được cả menu đang xổ ra. Phím tắt: Enter xong, Esc hủy, Ctrl+Z/Ctrl+Y, Ctrl+C, Ctrl+S.
-- **Cài đặt chụp màn hình**: đường dẫn chữ thập, kính lúp, kích thước vùng chọn (pixel), nút chỉnh kích thước vùng chọn, phát hiện cửa sổ; kiểu chú thích mặc định (màu, độ dày nét, cỡ chữ); đầu ra ảnh (vị trí lưu, PNG/JPG, sao chép ảnh dưới dạng file, đóng sau khi sao chép/lưu).
-- **Cài đặt mạng**: kết nối trực tiếp / proxy hệ thống / proxy tùy chỉnh (HTTP hoặc SOCKS5, có xác thực), danh sách bỏ qua proxy, nút kiểm tra kết nối. Áp dụng ngay, không cần khởi động lại.
-
-### Tự cập nhật
-
-<img src="asset/ui-update.png" align="right" width="300"/>
-
-Khi mở app, tự kiểm tra bản mới trên [Releases](https://github.com/nguyenguyen673/673Trans/releases); bấm Cập nhật là tự tải, thay file và mở lại.
-
-<br clear="right"/>
-
-Chỉ cần file `.exe` để chạy (Windows 10/11 có WebView2). Wiktionary và các dịch vụ AI cần internet; dịch vụ AI cần khoá API của bạn.
-
-## Nâng cao
+## Cho người dùng nâng cao
 
 <details>
 <summary><b>Gọi 673Trans từ app khác (localhost)</b></summary>
@@ -236,10 +198,8 @@ Trên macOS, tự cập nhật chỉ mở trang tải về trong trình duyệt,
 
 </details>
 
-## Bảo mật
-
 <details>
-<summary><b>Bấm để xem</b></summary>
+<summary><b>Bảo mật</b></summary>
 
 - Khi bật **Tự cập nhật**, app chỉ tải từ release của repo này, tải đúng file của bản mới nhất và kiểm tra mã SHA-256 do GitHub công bố trước khi thay file.
 - API localhost chỉ nhận lệnh từ chương trình chạy trên máy bạn (trang web trong trình duyệt bị chặn). Muốn chặt hơn, thêm `"server_token": "mật-khẩu-của-bạn"` vào `config.json` rồi gửi kèm header `X-Token`.
@@ -249,12 +209,10 @@ Trên macOS, tự cập nhật chỉ mở trang tải về trong trình duyệt,
 
 </details>
 
-## Cài đặt và build
-
 <details>
-<summary><b>Bấm để xem</b></summary>
+<summary><b>Build từ mã nguồn</b></summary>
 
-Cần Node.js 18+, pnpm, Rust, và Visual Studio Build Tools (Desktop development with C++).
+Cần Node.js 18+, pnpm, Rust và Visual Studio Build Tools (Desktop development with C++).
 
 ```
 pnpm install
@@ -262,18 +220,15 @@ pnpm tauri dev      # chạy thử
 pnpm tauri build    # ra bản cài đặt
 ```
 
-Hướng dẫn chi tiết, chỗ sửa từng phần của giao diện và cách tự thêm hãng AI: xem [HUONG-DAN.md](HUONG-DAN.md).
+Hướng dẫn chi tiết và cách tự thêm hãng AI: xem [HUONG-DAN.md](HUONG-DAN.md).
 
 </details>
 
-## Ghi công và giấy phép
-
 <details>
-<summary><b>Bấm để xem</b></summary>
+<summary><b>Ghi công và giấy phép</b></summary>
 
-673Trans phát hành theo giấy phép [GPL-3.0](LICENSE).
+673Trans phát hành theo giấy phép [GPL-3.0](LICENSE), dựa trên [Pot](https://github.com/pot-app/pot-desktop).
 
 Dữ liệu từ điển Anh–Việt offline là của [Dự án Từ điển tiếng Việt miễn phí](https://www.informatik.uni-leipzig.de/~duc/Dict/) (Hồ Ngọc Đức); Wiktionary thuộc Wikimedia Foundation, nội dung theo CC BY-SA, dữ liệu trích qua [kaikki.org](https://kaikki.org).
 
 </details>
-
