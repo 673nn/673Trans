@@ -460,6 +460,15 @@
                 "action_popup_desc": "Opens the translate window with this button on, to read and copy.",
                 "list_result": "Result is a list of choices",
                 "list_result_desc": "Each result line becomes a box; click to copy (like Quick reply)."
+            },
+            "nav": {
+                "general": "General",
+                "hotkey": "Hotkeys",
+                "features": "Features",
+                "service": "Services",
+                "history": "History",
+                "other": "Other",
+                "about": "About"
             }
         },
         "updater": {

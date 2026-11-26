@@ -1,4 +1,6 @@
 import { useLocation, useNavigate, useRoutes } from 'react-router-dom';
+import { Tabs, Tab } from '@nextui-org/react';
+import { groupOf, rememberPage } from './nav';
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api';
 import React, { useEffect } from 'react';
@@ -19,6 +21,11 @@ export default function Config() {
     const location = useLocation();
     const page = useRoutes(routes);
     const navigate = useNavigate();
+    const group = groupOf(location.pathname);
+    const tabbed = group.pages.length > 1;
+    useEffect(() => {
+        rememberPage(location.pathname);
+    }, [location.pathname]);
 
     // other windows can open a given page (translate window → AI buttons)
     useEffect(() => {
@@ -97,7 +104,9 @@ export default function Config() {
                 />
                 <div className='config-header'>
                     <div className='flex items-center gap-[16px]'>
-                        <h2 className='config-title'>{t(`config.${location.pathname.slice(1)}.title`)}</h2>
+                        <h2 className='config-title'>
+                            {tabbed ? t(`config.nav.${group.id}`) : t(`config.${location.pathname.slice(1)}.title`)}
+                        </h2>
                         {/* pages can put small controls next to the title (see History) */}
                         <div
                             id='config-header-slot'
@@ -106,7 +115,25 @@ export default function Config() {
                     </div>
                     <div className='flex'>{osType !== 'Darwin' && <WindowControl />}</div>
                 </div>
-                <div className='config-page'>{page}</div>
+                {tabbed && (
+                    <div className='config-tabs'>
+                        <Tabs
+                            variant='underlined'
+                            color='primary'
+                            selectedKey={location.pathname}
+                            onSelectionChange={(k) => navigate(String(k))}
+                            aria-label={t(`config.nav.${group.id}`)}
+                        >
+                            {group.pages.map((p) => (
+                                <Tab
+                                    key={p}
+                                    title={t(`config.${p.slice(1)}.label`)}
+                                />
+                            ))}
+                        </Tabs>
+                    </div>
+                )}
+                <div className={`config-page ${tabbed ? 'has-tabs' : ''}`}>{page}</div>
             </div>
         </>
     );
