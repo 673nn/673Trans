@@ -460,6 +460,15 @@
                 "action_popup_desc": "Mở cửa sổ dịch với nút này đang bật, xem kết quả rồi chép.",
                 "list_result": "Kết quả là danh sách lựa chọn",
                 "list_result_desc": "Mỗi dòng kết quả thành một ô, bấm là chép (như Trả lời nhanh)."
+            },
+            "nav": {
+                "general": "Chung",
+                "hotkey": "Phím tắt",
+                "features": "Tính năng",
+                "service": "Dịch vụ",
+                "history": "Lịch sử",
+                "other": "Khác",
+                "about": "Giới thiệu"
             }
         },
         "updater": {

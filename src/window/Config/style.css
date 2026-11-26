@@ -117,6 +117,18 @@
     letter-spacing: -0.015em;
 }
 
+.config-tabs {
+    height: 40px;
+    padding: 0 14px;
+    display: flex;
+    align-items: flex-end;
+}
+
+.config-page.has-tabs {
+    height: calc(100vh - 92px);
+    padding-top: 12px;
+}
+
 .config-page {
     height: calc(100vh - 52px);
     padding: 4px 24px 24px;

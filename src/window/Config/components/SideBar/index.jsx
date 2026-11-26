@@ -1,55 +1,29 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import {
-    LuSettings2,
-    LuLanguages,
-    LuTextSelect,
-    LuScanLine,
-    LuKeyboard,
-    LuPuzzle,
-    LuHistory,
-    LuCloud,
-    LuInfo,
-    LuCrop,
-    LuWand2,
-    LuGlobe,
-} from 'react-icons/lu';
 import React from 'react';
 
-// Order of the pages in the sidebar. `path` must match a route in ../../routes
-const items = [
-    { path: '/general', icon: LuSettings2 },
-    { path: '/translate', icon: LuLanguages },
-    { path: '/toolbar', icon: LuTextSelect },
-    { path: '/recognize', icon: LuScanLine },
-    { path: '/aimodes', icon: LuWand2 },
-    { path: '/screenshot', icon: LuCrop },
-    { path: '/network', icon: LuGlobe },
-    { path: '/hotkey', icon: LuKeyboard },
-    { path: '/service', icon: LuPuzzle, key: true },
-    { path: '/history', icon: LuHistory },
-    { path: '/backup', icon: LuCloud },
-    { path: '/about', icon: LuInfo },
-];
+import { GROUPS, groupOf, lastPage } from '../../nav';
 
 export default function SideBar() {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
+    const current = groupOf(location.pathname);
 
     return (
         <nav className='config-nav'>
-            {items.map(({ path, icon: Icon, key }) => {
-                const active = location.pathname.includes(path);
+            {GROUPS.map((g) => {
+                const Icon = g.icon;
+                const active = g.id === current.id;
                 return (
                     <button
-                        key={path}
+                        key={g.id}
                         type='button'
-                        className={`config-nav-item ${active ? 'is-active' : ''} ${key ? 'is-key' : ''}`}
-                        onClick={() => navigate(path)}
+                        className={`config-nav-item ${active ? 'is-active' : ''} ${g.key ? 'is-key' : ''}`}
+                        onClick={() => navigate(lastPage(g))}
                     >
                         <Icon className='config-nav-icon' />
-                        <span>{t(`config.${path.slice(1)}.label`)}</span>
+                        <span>{t(`config.nav.${g.id}`)}</span>
                     </button>
                 );
             })}
