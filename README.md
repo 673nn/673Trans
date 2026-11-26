@@ -8,6 +8,8 @@
 ![React](https://img.shields.io/badge/-React-61dafb?logo=react&logoColor=white)
 ![Rust](https://img.shields.io/badge/-Rust-orange?logo=rust&logoColor=white)
 ![Windows](https://img.shields.io/badge/-Windows-blue?logo=windows&logoColor=white)
+![macOS](https://img.shields.io/badge/-macOS-black?logo=apple&logoColor=white)
+![JavaScript](https://img.shields.io/badge/-JavaScript-f7df1e?logo=javascript&logoColor=black)
 
 <br/>
 
