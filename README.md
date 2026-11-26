@@ -47,7 +47,8 @@ Mặc định dùng Google miễn phí. Muốn dịch hay hơn, tự nhiên hơn
 - **Giọng đọc AI** và giọng Edge neural có sẵn.
 - **Tự cập nhật**, sao lưu lên WebDAV hoặc Google Drive.
 
-<p align="center"><img src="asset/demo-translate.gif" width="880"/></p>
+<p align="center"><img src="asset/demo-translate.gif" width="900"/></p>
+<p align="center"><img src="asset/ui-replace.png" width="900"/></p>
 
 ## Tính năng
 
@@ -72,17 +73,11 @@ Trong **Cài đặt → Tính năng → Nút AI** (hoặc nút **+** cạnh hàn
 <details>
 <summary><b>Thanh icon nổi khi chọn chữ</b></summary>
 
-<img src="asset/ui-toolbar-v2.png" align="right" width="460"/>
-
 - Hiện cạnh con trỏ khi bôi đen chữ, nhấp đúp một từ hoặc Ctrl+A, ở bất kỳ app nào.
 - Các nút: Dịch, Dịch và thay thế, Dịch và sao chép, Đọc to, Tra từ điển, Gõ từ, Sao chép, cùng các nút AI bạn chọn.
 - Kéo thả đổi thứ tự, ngang/dọc, chỉ icon hoặc có chữ, lọc theo ứng dụng, có ô xem trước trong cài đặt.
 
-<br clear="right"/>
-
-**Dịch và thay thế**: bản dịch được dán đè đúng chỗ đang chọn. Nếu chữ không sửa được (trang web, PDF), bản dịch hiện đè lên ngay vị trí đó, cuộn trang hoặc bấm Esc là tắt.
-
-<p align="center"><img src="asset/ui-replace-v3.png" width="880"/></p>
+**Dịch và thay thế**: bản dịch được dán đè đúng chỗ đang chọn. Nếu chữ không sửa được (trang web, PDF), bản dịch hiện đè lên ngay vị trí đó, cuộn trang hoặc bấm Esc là tắt (xem ảnh ở phần Điểm nổi bật).
 
 </details>
 
